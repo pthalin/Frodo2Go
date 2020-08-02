@@ -23,7 +23,7 @@
 #include "SAM.h"
 #include "Version.h"
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #ifdef ENABLE_OPENGL
 #include <GL/glew.h>

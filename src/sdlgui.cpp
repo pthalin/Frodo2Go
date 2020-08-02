@@ -232,7 +232,10 @@ void SDLGui_UpdateRect(SDL_Rect *rect)
     rect->h = (sdlscrn->h - rect->y);
 
   if ((rect->w > 0) && (rect->h > 0))
-    SDL_UpdateRects(sdlscrn, 1, rect);
+    {
+//TODO: Crashes.... why?
+    //SDL_UpdateRects(sdlscrn, 1, rect);
+    }
   else
   {
     rect->x = 0;

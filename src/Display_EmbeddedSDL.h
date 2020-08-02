@@ -29,8 +29,8 @@
 #include "dlgMain.h"
 
 #define QWS
-#include <SDL.h>
-#include <SDL_thread.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_thread.h>
 
 // Display surface
 static SDL_Surface *screen = 0;
@@ -89,8 +89,13 @@ enum
 
 char *buffer;
 
-int width = 320;
-int height = 240;
+const int width = 320;
+const int height = 240;
+
+//const int width = 0x180;
+//const int height = 0x110;
+
+
 
 bool isGuiAvailable = true; // TODO from main.cpp
 bool GUIOpened = false;
@@ -261,7 +266,7 @@ int init_graphics(void)
 	buffer = new char[DISPLAY_X*DISPLAY_Y];
 	// Open window
 	SDL_WM_SetCaption(VERSION_STRING, "Frodo");
-	screen = SDL_SetVideoMode(320, 240, 8, SDL_DOUBLEBUF);
+	screen = SDL_SetVideoMode(width, height, 8, SDL_DOUBLEBUF);
 	surf = screen;
 	if (screen == NULL)
 	{

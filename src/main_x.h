@@ -27,7 +27,7 @@
 // Qtopia Windowing System
 #ifdef QTOPIA
 extern "C" int main(int argc, char *argv[]);
-#include <SDL.h>
+#include <SDL/SDL.h>
 #endif
 
 extern int init_graphics(void);
