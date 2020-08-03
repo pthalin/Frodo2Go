@@ -36,6 +36,7 @@ extern int init_graphics(void);
 // Global variables
 Frodo *TheApp = NULL;
 char Frodo::prefs_path[256] = "";
+char Frodo::d8_path[256] = "";
 
 
 /*
@@ -44,22 +45,16 @@ char Frodo::prefs_path[256] = "";
 
 int main(int argc, char **argv)
 {
-#ifdef HAVE_GLADE
-	gnome_program_init(PACKAGE_NAME, PACKAGE_VERSION, LIBGNOMEUI_MODULE, argc, argv,
-	                   GNOME_PARAM_APP_DATADIR, DATADIR, NULL);
-#endif
-
 	timeval tv;
 	gettimeofday(&tv, NULL);
 	srand(tv.tv_usec);
 
-#ifndef HAVE_GLADE
 	printf(
 		"%s Copyright (C) Christian Bauer\n"
 		"This is free software with ABSOLUTELY NO WARRANTY.\n"
 		, VERSION_STRING
 	);
-#endif
+
 	if (!init_graphics())
 		return 1;
 	fflush(stdout);
@@ -89,8 +84,11 @@ Frodo::Frodo()
 
 void Frodo::ArgvReceived(int argc, char **argv)
 {
-	if (argc == 2)
-		strncpy(prefs_path, argv[1], 255);
+  if (argc == 2)
+    strncpy(prefs_path, argv[1], 255);
+  else if ((argc == 3) && !strcmp(argv[1], "-d8"))
+    strncpy(d8_path, argv[2], 255);
+
 }
 
 
@@ -111,13 +109,9 @@ void Frodo::ReadyToRun()
 		}
 		strcat(prefs_path, ".frodorc");
 	}
-	ThePrefs.Load(prefs_path);
+	//ThePrefs.Load(prefs_path);
+	strncpy(ThePrefs.DrivePath[0], d8_path,256);
 
-	// Show preferences editor
-#ifdef HAVE_GLADE
-	if (!ThePrefs.ShowEditor(true, prefs_path))
-		return;  // "Quit" clicked
-#endif
 
 	// Create and start C64
 	TheC64 = new C64;

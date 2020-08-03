@@ -234,7 +234,7 @@ void SDLGui_UpdateRect(SDL_Rect *rect)
   if ((rect->w > 0) && (rect->h > 0))
     {
 //TODO: Crashes.... why?
-    //SDL_UpdateRects(sdlscrn, 1, rect);
+    SDL_UpdateRects(sdlscrn, 1, rect);
     }
   else
   {
@@ -264,11 +264,11 @@ void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
 {
   SDL_Rect coord;
 
-  SDLGui_ObjFullCoord(dlg, objnum, &coord);
+  //SDLGui_ObjFullCoord(dlg, objnum, &coord);
 
-  screenlock();
-  SDLGui_UpdateRect(&coord);
-  screenunlock();
+  //screenlock();
+  //SDLGui_UpdateRect(&coord);
+  //screenunlock();
 }
 
 

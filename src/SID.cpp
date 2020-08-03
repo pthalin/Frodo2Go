@@ -31,52 +31,6 @@
 #include "SID.h"
 #include "Prefs.h"
 
-#ifdef __BEOS__
-#include <media/SoundPlayer.h>
-#endif
-
-#ifdef AMIGA
-#include <exec/types.h>
-#include <utility/hooks.h>
-#include <devices/ahi.h>
-#define USE_FIXPOINT_MATHS
-#define FIXPOINT_PREC 16	// number of fractional bits used in fixpoint representation
-#define PRECOMPUTE_RESONANCE
-#define ldSINTAB 9			// size of sinus table (0 to 90 degrees)
-#endif
-
-#ifdef SUN
-extern "C" {
-	#include <sys/audioio.h>
-}
-#endif
-
-#ifdef __hpux
-extern "C" {
-	#include <sys/audio.h>
-}
-#endif
-
-#ifdef __mac__
-#include <Sound.h>
-#define M_PI 3.14159265358979323846
-#endif
-
-#ifdef WIN32
-class DigitalPlayer;
-#endif
-
-#ifdef __riscos__
-#include "ROLib.h"
-# ifndef M_PI
-# define M_PI 3.14159265358979323846
-# endif
-#define USE_FIXPOINT_MATHS
-#define FIXPOINT_PREC 16	// number of fractional bits used in fixpoint representation
-#define PRECOMPUTE_RESONANCE
-#define ldSINTAB 9			// size of sinus table (0 to 90 degrees)
-#endif
-
 
 #ifdef USE_FIXPOINT_MATHS
 #include "FixPoint.h"
@@ -276,11 +230,8 @@ void MOS6581::SetState(MOS6581State *ss)
  **  Renderer for digital SID emulation (SIDTYPE_DIGITAL)
  **/
 
-#if defined(AMIGA) || defined(__riscos__)
-const uint32 SAMPLE_FREQ = 22050;	// Sample output frequency in Hz
-#else
+
 const uint32 SAMPLE_FREQ = 44100;	// Sample output frequency in Hz
-#endif
 const uint32 SID_FREQ = 985248;		// SID frequency in Hz
 const uint32 CALC_FREQ = 50;			// Frequency at which calc_buffer is called in Hz (should be 50Hz)
 const uint32 SID_CYCLES = SID_FREQ/SAMPLE_FREQ;	// # of SID clocks per sample frame
@@ -367,11 +318,7 @@ public:
 private:
 	void init_sound(void);
 	void calc_filter(void);
-#ifdef __riscos__
-	void calc_buffer(uint8 *buf, long count);
-#else
 	void calc_buffer(int16 *buf, long count);
-#endif
 
 	C64 *the_c64;					// Pointer to C64 object
 
@@ -414,30 +361,6 @@ private:
 	uint8 sample_buf[SAMPLE_BUF_SIZE]; // Buffer for sampled voice
 	int sample_in_ptr;				// Index in sample_buf for writing
 
-#ifdef __BEOS__
-	static void buffer_proc(void *cookie, void *buffer, size_t size, const media_raw_audio_format &format);
-	BSoundPlayer *the_player;		// Pointer to sound player
-	bool player_stopped;			// Flag: player stopped
-#endif
-
-#ifdef AMIGA
-	static void sub_invoc(void);	// Sound sub-process
-	void sub_func(void);
-	struct Process *sound_process;
-	int quit_sig, pause_sig,
-		resume_sig, ahi_sig;		// Sub-process signals
-	struct Task *main_task;			// Main task
-	int main_sig;					// Main task signals
-	static ULONG sound_func(void);	// AHI callback
-	struct MsgPort *ahi_port;		// Port and IORequest for AHI
-	struct AHIRequest *ahi_io;
-	struct AHIAudioCtrl *ahi_ctrl;	// AHI control structure
-	struct AHISampleInfo sample[2];	// SampleInfos for double buffering
-	struct Hook sf_hook;			// Hook for callback function
-	int play_buf;					// Number of buffer currently playing
-#endif
-
-
 #ifdef HAVE_SDL
 	static void buffer_proc(void *cookie, uint8 *buffer, int size);
 #else
@@ -447,56 +370,8 @@ private:
 	int16 *sound_buffer;
 # endif
 
-# ifdef SUN
-	int fd;
-	audio_info status;
-	uint_t sent_samples,delta_samples;
-	int16 *sound_calc_buf;
-# endif
-
-# ifdef __hpux
-	int fd;
-	audio_status status;
-	int16 *sound_calc_buf;
-	int linecnt;
-# endif
-
 #endif // ndef HAVE_SDL
 
-
-#ifdef __mac__
-	SndChannelPtr chan1;
-	SndDoubleBufferHeader myDblHeader;
-	SndDoubleBufferPtr sampleBuffer1, sampleBuffer2;
-	SCStatus myStatus;
-	short sndbufsize;
-	OSErr err;
-
-	static void doubleBackProc(SndChannelPtr chan, SndDoubleBufferPtr doubleBuffer);
-#endif
-
-#ifdef WIN32
-public:
-	void VBlank(void);
-
-private:
-	void StartPlayer(void);
-	void StopPlayer(void);
-
-	BOOL direct_sound;
-	DigitalPlayer *ThePlayer;
-	SWORD *sound_buffer;
-	int to_output;
-	int sb_pos;
-	int divisor;
-	int *lead;
-	int lead_pos;
-#endif
-
-#ifdef __riscos__
-	int linecnt, sndbufsize;
-	uint8 *sound_buffer;
-#endif
 };
 
 // Static data members

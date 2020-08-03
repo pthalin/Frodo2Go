@@ -108,10 +108,8 @@ void update( int32 x, int32 y, int32 w, int32 h, bool forced )
 {
 	if ( !forced && !doUpdate ) // the HW surface is available
 		return;
-
-	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
-	// SDL_UpdateRect(surf, x, y, w, h);
 	SDL_UpdateRect(screen, x, y, w, h);
+
 }
 
 void update( bool forced )
@@ -274,7 +272,7 @@ int init_graphics(void)
 	}
 	else
 	{
-		fprintf(stderr, "SDL Set video mode to %d x %d\n", DISPLAY_X, DISPLAY_Y+17);
+		fprintf(stderr, "SDL Set video mode to %d x %d\n", width, height);
 		SDLGui_Init(screen);
 		start_GUI_thread();
 	}
