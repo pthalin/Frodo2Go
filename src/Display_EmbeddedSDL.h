@@ -40,7 +40,7 @@ static SDL_Surface *surf = 0;
 static SDL_mutex *screenLock = 0;
 
 // Mode of Joystick emulation. 0 = none, 1 = Joyport 1, 2 = Joyport 2
-static short joy_emu = 0;
+static short joy_emu = 1;
 
 // Keyboard
 static bool tab_pressed = false;
@@ -265,6 +265,7 @@ int init_graphics(void)
 	// Open window
 	SDL_WM_SetCaption(VERSION_STRING, "Frodo");
 	screen = SDL_SetVideoMode(width, height, 8, SDL_DOUBLEBUF);
+	SDL_ShowCursor(SDL_DISABLE);
 	surf = screen;
 	if (screen == NULL)
 	{
@@ -556,7 +557,8 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 			case SDLK_z: c64_key = MATRIX(1,4); break;
 
 			case SDLK_0: c64_key = MATRIX(4,3); break;
-			case SDLK_1: c64_key = MATRIX(7,0); break;
+			  //case SDLK_1: c64_key = MATRIX(7,0); break;
+		        case SDLK_LALT: c64_key = MATRIX(7,0); break;
 			case SDLK_2: c64_key = MATRIX(7,3); break;
 			case SDLK_3: c64_key = MATRIX(1,0); break;
 			case SDLK_4: c64_key = MATRIX(1,3); break;
@@ -579,7 +581,7 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 			case SDLK_QUOTE: c64_key = MATRIX(6,2); break;
 			case SDLK_SLASH: c64_key = MATRIX(6,7); break;
 
-			case SDLK_ESCAPE: c64_key = MATRIX(7,7); break;
+			  //case SDLK_ESCAPE: c64_key = MATRIX(7,7); break;
 			case SDLK_RETURN: c64_key = MATRIX(0,1); break;
 			case SDLK_BACKSPACE: case SDLK_DELETE: c64_key = MATRIX(0,0); break;
 			case SDLK_INSERT: c64_key = MATRIX(6,3); break;
@@ -588,11 +590,11 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 			case SDLK_PAGEUP: c64_key = MATRIX(6,0); break;
 			case SDLK_PAGEDOWN: c64_key = MATRIX(6,5); break;
 
-			case SDLK_LCTRL: c64_key = MATRIX(7,2); break;
-			case SDLK_RCTRL: c64_key = MATRIX(7,5); break;
+			  //case SDLK_LCTRL: c64_key = MATRIX(7,2); break;
+			  //case SDLK_RCTRL: c64_key = MATRIX(7,5); break;
 			case SDLK_LSHIFT: c64_key = MATRIX(1,7); break;
 			case SDLK_RSHIFT: c64_key = MATRIX(6,4); break;
-			case SDLK_LALT: case SDLK_LMETA: c64_key = MATRIX(7,5); break;
+			  //case SDLK_LALT: case SDLK_LMETA: c64_key = MATRIX(7,5); break;
 			case SDLK_RALT: case SDLK_RMETA: c64_key = MATRIX(7,5); break;
 
 			case SDLK_UP: c64_key = MATRIX(0,7)| 0x80; break;
@@ -787,7 +789,8 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 			// Key pressed
 			case SDL_KEYDOWN:
 //				fprintf(stderr, "SDL-Key: %d\n", event.key.keysym.sym);
-				if (tab_pressed && event.key.keysym.sym == SDLK_j)
+			  //if (tab_pressed && event.key.keysym.sym == SDLK_j)
+			        if (event.key.keysym.sym == SDLK_ESCAPE)
 				{
 					if (joy_emu < 2)
 						joy_emu++;
@@ -811,7 +814,7 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 							SAM(TheC64);
 							break;
 
-						case SDLK_F11:	// F10: Quit
+						case SDLK_RCTRL:	// F10: Quit
 							// Iconify not implemented in Qtopia SDL yet. Quit instead show gui.
 							//SDL_WM_IconifyWindow();
 							quit_requested = true;
