@@ -274,7 +274,7 @@ int init_graphics(void)
 	{
 		fprintf(stderr, "SDL Set video mode to %d x %d\n", width, height);
 		SDLGui_Init(screen);
-		start_GUI_thread();
+		//start_GUI_thread();
 	}
 	return 1;
 }
@@ -686,6 +686,10 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joystick)
 {
 	SDL_Event event;
+	static bool cmd_key_up = false;
+	static unsigned int cmd_pos = 0;
+	static unsigned int start_delay = 180;
+	char cmd_buffer[] = "load\"*\",8\r:run\r";
 	int eventmask = SDL_EVENTMASK(SDL_KEYDOWN)
 					| SDL_EVENTMASK(SDL_KEYUP)
 					| SDL_EVENTMASK(SDL_MOUSEBUTTONDOWN)
@@ -698,7 +702,23 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 					| SDL_EVENTMASK(SDL_ACTIVEEVENT)
 					| SDL_EVENTMASK(GUI_RETURN_INFO)
 					| SDL_EVENTMASK(SDL_QUIT);
-
+	if (start_delay>0) start_delay--; 
+	
+	if((cmd_pos < sizeof(cmd_buffer)) && (start_delay == 0))
+	  {
+	    translate_key((SDLKey)cmd_buffer[cmd_pos], cmd_key_up, key_matrix, rev_matrix, joystick);
+	    if (cmd_key_up)
+	      {
+		cmd_key_up = false;
+		cmd_pos++;
+	      }
+	    else
+	      {
+		cmd_key_up = true;
+	      }
+	    return;
+	  }
+	  
 	SDL_PumpEvents();
 	while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, eventmask))
 	{
