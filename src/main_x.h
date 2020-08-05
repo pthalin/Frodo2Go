@@ -48,13 +48,13 @@ int main(int argc, char **argv)
 	timeval tv;
 	gettimeofday(&tv, NULL);
 	srand(tv.tv_usec);
-
+	/*
 	printf(
 		"%s Copyright (C) Christian Bauer\n"
 		"This is free software with ABSOLUTELY NO WARRANTY.\n"
 		, VERSION_STRING
 	);
-
+	*/
 	if (!init_graphics())
 		return 1;
 	fflush(stdout);
@@ -85,10 +85,10 @@ Frodo::Frodo()
 void Frodo::ArgvReceived(int argc, char **argv)
 {
   if (argc == 2)
-    strncpy(prefs_path, argv[1], 255);
-  else if ((argc == 3) && !strcmp(argv[1], "-d8"))
-    strncpy(d8_path, argv[2], 255);
-
+    strncpy(d8_path, argv[1], 255);
+  //strncpy(prefs_path, argv[1], 255);
+  //else if ((argc == 3) && !strcmp(argv[1], "-d8"))
+  // strncpy(d8_path, argv[2], 255);
 }
 
 
@@ -110,9 +110,11 @@ void Frodo::ReadyToRun()
 		strcat(prefs_path, ".frodorc");
 	}
 	//ThePrefs.Load(prefs_path);
-	strncpy(ThePrefs.DrivePath[0], d8_path,256);
+	strncpy(ThePrefs.DrivePath[0], d8_path,255);
 
-
+	if (d8_path[0] == '\0')
+	  printf("ERROR: Path is to long or empty\n");
+	
 	// Create and start C64
 	TheC64 = new C64;
 	load_rom_files();

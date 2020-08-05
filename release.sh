@@ -10,7 +10,6 @@ cd src
 cd ..
 
 cp src/Frodo release/Frodo2Go/
-cp src/run.sh release/Frodo2Go/
 
 cp controls.man.txt release
 
