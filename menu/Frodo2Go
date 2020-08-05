@@ -1,0 +1,5 @@
+title=C64
+exec=/mnt/EMUS/Frodo2Go/run.sh
+clock=702
+selectordir=/mnt/ROMS/C64
+selectorelement=1

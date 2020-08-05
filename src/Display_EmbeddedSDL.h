@@ -269,13 +269,13 @@ int init_graphics(void)
 	surf = screen;
 	if (screen == NULL)
 	{
-		fprintf(stderr, "SDL Couldn't set video mode to %d x %d\n", DISPLAY_X, DISPLAY_Y+17);
+	  fprintf(stderr, "SDL Couldn't set video mode to %d x %d\n", width, height);
 	}
 	else
 	{
-		fprintf(stderr, "SDL Set video mode to %d x %d\n", width, height);
-		SDLGui_Init(screen);
-		//start_GUI_thread();
+	  fprintf(stderr, "SDL Set video mode to %d x %d\n", width, height);
+	  SDLGui_Init(screen);
+	  //start_GUI_thread();
 	}
 	return 1;
 }
@@ -296,6 +296,7 @@ C64Display::C64Display(C64 *the_c64) : TheC64(the_c64)
 		led_state[i] = old_led_state[i] = LED_OFF;
 
 	// Start timer for LED error blinking
+#ifdef STATUS_DISP
 	c64_disp = this;
 	pulse_sa.sa_handler = (void (*)(int))pulse_handler;
 	pulse_sa.sa_flags = SA_RESTART;
@@ -306,6 +307,7 @@ C64Display::C64Display(C64 *the_c64) : TheC64(the_c64)
 	pulse_tv.it_value.tv_sec = 0;
 	pulse_tv.it_value.tv_usec = 400000;
 	setitimer(ITIMER_REAL, &pulse_tv, NULL);
+#endif
 }
 
 
@@ -340,10 +342,15 @@ void C64Display::Update(void)
 		return;
 	int iOffsetX = (DISPLAY_X - surf->w) / 2;
 	int iOffsetY = (DISPLAY_Y - surf->h) / 2;
+#ifdef STATUS_DISP
 	for (int j=0; j < surf->h - 17; j++)
+#else
+	  for (int j=0; j < surf->h; j++)
+#endif
 	{
-		memcpy(static_cast<char*>(surf->pixels)+surf->w*j, buffer+iOffsetX+DISPLAY_X*(j+iOffsetY), surf->w);
+	  memcpy(static_cast<char*>(surf->pixels)+surf->w*j, buffer+iOffsetX+DISPLAY_X*(j+iOffsetY), surf->w);
 	}
+#ifdef STATUS_DISP
 	// Draw speedometer/LEDs
 	SDL_Rect r = {0, (surf->h - 17), DISPLAY_X, 15};
 	SDL_FillRect(surf, &r, fill_gray);
@@ -404,6 +411,7 @@ void C64Display::Update(void)
 		draw_string(surf, DISPLAY_X * 4/5 + 2, (surf->h - 17) + 4, "2", black, fill_gray);
 	draw_string(surf, 24, (surf->h - 17) + 4, speedometer_string, black, fill_gray);
 
+#endif
 	// Update display
 	SDL_Flip(surf);
 
@@ -557,7 +565,7 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 			case SDLK_z: c64_key = MATRIX(1,4); break;
 
 			case SDLK_0: c64_key = MATRIX(4,3); break;
-			  //case SDLK_1: c64_key = MATRIX(7,0); break;
+			case SDLK_1: c64_key = MATRIX(7,0); break;
 		        case SDLK_LALT: c64_key = MATRIX(7,0); break;
 			case SDLK_2: c64_key = MATRIX(7,3); break;
 			case SDLK_3: c64_key = MATRIX(1,0); break;
@@ -636,17 +644,21 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 		return;
 
 	// Zaurus/Qtopia joystick emulation
-	if (joy_emu != 0)
-	{
+	//if (joy_emu != 0)
+	//{
 		switch (key)
-		{
-			case SDLK_SPACE: c64_key = 0x10 | 0x40; break;
-			case SDLK_UP: c64_key = 0x01 | 0x40; break;
-			case SDLK_DOWN: c64_key = 0x02 | 0x40; break;
-			case SDLK_LEFT: c64_key =  0x04 | 0x40; break;
+		  {
+  // case SDLK_LCTRL: c64_key = 0x10 | 0x40; break; //A fire
+		    //case SDLK_SPACE: c64_key = 0x01 | 0x40; break; //B up
+		       case SDLK_LSHIFT: c64_key = 0x01 | 0x40; break; //TA up
+		       case SDLK_SPACE: c64_key = 0x10 | 0x40; break; //B fire
+		
+		        case SDLK_UP:    c64_key = 0x01 | 0x40; break;
+			case SDLK_DOWN:  c64_key = 0x02 | 0x40; break;
+			case SDLK_LEFT:  c64_key = 0x04 | 0x40; break;
 			case SDLK_RIGHT: c64_key = 0x08 | 0x40; break;
 		}
-	}
+		//}
 
 	// Handle joystick emulation
 	if (c64_key & 0x40) 

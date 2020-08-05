@@ -1,0 +1,7 @@
+A  = ?
+B  = Fire
+TA = 1
+TB = Up
+R = Exit
+SELECT = Toggel Joystick port
+START  = ?
