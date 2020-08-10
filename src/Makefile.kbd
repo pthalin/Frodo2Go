@@ -1,0 +1,39 @@
+# st version
+VERSION = 0.0
+
+# includes and libs
+INCS = -I. 
+LIBS = -lc -lutil
+
+# flags
+CPPFLAGS = -m32 -g -DVERSION=\"${VERSION}\"
+CFLAGS += -m32 -g -Wall ${INCS} ${CPPFLAGS} -DRS97 -fPIC
+LDFLAGS += -m32 -g ${LIBS} -lSDL 
+
+# compiler and linker
+CC ?= cc
+
+
+SRC = keyboard.c font.c 
+OBJ = ${SRC:.c=.o}
+all: options kbd 
+
+options:
+	@echo kbd build options:
+	@echo "CFLAGS   = ${CFLAGS}"
+	@echo "LDFLAGS  = ${LDFLAGS}"
+	@echo "CC       = ${CC}"
+
+.c.o:
+	@echo CC $<
+	@${CC} -c ${CFLAGS} $<
+
+
+
+kbd: 	${OBJ}
+	@echo CC -o $@
+	@${CC} -o $@ ${OBJ} ${LDFLAGS}
+
+clean:
+	@echo cleaning
+	@rm -f kbd ${OBJ} 
