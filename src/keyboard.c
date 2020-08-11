@@ -53,7 +53,7 @@ static SDLKey keys[2][NUM_ROWS][NUM_KEYS] = {
 	}
 };
 
-static char* syms[2][NUM_ROWS][NUM_KEYS] = {
+char const *syms[2][NUM_ROWS][NUM_KEYS] = {
 	{
 	  {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0",    "+",     "-", "S:28", "HOM", "f1", NULL},
 	  {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",    "S:256", "*", "S:31", "DEL", "f3", NULL},
@@ -88,7 +88,7 @@ void init_keyboard() {
   mod_state = 0;
 }
 
-char* help = 
+char const *help = 
 "How to use:\n"
 "  ARROWS: select key from keyboard\n"
 "  A: press key\n"
@@ -101,7 +101,7 @@ char* help =
 "  START: show this help\n"
 ;
 
-int strlensym(char *str) {
+int strlensym(char const *str) {
   if(strncmp(str,"S:",2) == 0) return 1;
   else return strlen(str);
 }
@@ -132,7 +132,11 @@ void draw_keyboard(SDL_Surface* surface) {
 	int x = center_x, y = surface->h - 8 * (NUM_ROWS) - 16;
 	if(location == 1) y = 16;
 
-	SDL_Rect rect = {x - 4, y - 3, total_length + 3, NUM_ROWS * 8 + 3};
+	SDL_Rect rect;
+	rect.x = x - 4;
+	rect.y = y - 3;
+	rect.w = total_length + 3;
+	rect.h = NUM_ROWS * 8 + 3;
 	SDL_FillRect(surface, &rect, bg_color);
 
 	for(int j = 0; j < NUM_ROWS; j++) {
@@ -145,7 +149,11 @@ void draw_keyboard(SDL_Surface* surface) {
 	      length = strlensym(syms[shifted][j][i]);
 	      is_sym = 0;
 	    }	
-	    SDL_Rect r2 = {x - 2, y - 1, length * 6 + 4, 7};
+	    SDL_Rect r2;
+	    r2.x = x - 2;
+	    r2.y = y - 1;
+	    r2.w = length * 6 + 4;
+	    r2.h = 7;
 	    if(toggled[j][i]) {
 	      if(selected_i == i && selected_j == j) {
 		SDL_FillRect(surface, &r2, sel_toggled_color);
@@ -338,14 +346,22 @@ int main() {
 				handle_keyboard_event(&event);
 			}
 		}
-		SDL_Rect r = {0, 0, buffer->w, buffer->h};
+		SDL_Rect r;
+		r.x = 0;
+		r.y = 0;
+		r.w = buffer->w;
+		r.h = buffer->h;
 		SDL_FillRect(buffer, &r, 0);
 		draw_keyboard(buffer);
 		SDL_LockSurface(buffer);
 		for(int j = 0; j < buffer->h; j++) {
 			for(int i = 0; i < buffer->w; i++) {
-				SDL_Rect rect = {i * 2, j * 2, 2, 2};
-				SDL_FillRect(screen, &rect, ((unsigned short*)buffer->pixels)[j * (buffer->pitch >> 1) + i]);
+			  SDL_Rect rect;
+			  rect.x = i * 2;
+			  rect.y = j * 2;
+			  rect.w = 2;
+			  rect.h = 2;
+			  SDL_FillRect(screen, &rect, ((unsigned short*)buffer->pixels)[j * (buffer->pitch >> 1) + i]);
 			}
 		}
 		SDL_UnlockSurface(buffer);
