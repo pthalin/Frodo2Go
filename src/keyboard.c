@@ -37,30 +37,19 @@ define KEY_DOWN SDLK_DOWN
 #define KMOD_SYNTHETIC (1 << 13)
 
 static int row_length[NUM_ROWS] = {15, 15, 15, 14, 7};
-
 static SDLKey keys[2][NUM_ROWS][NUM_KEYS] = {
 	{
-	  {SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8, SDLK_9, SDLK_0, SDLK_PLUS, SDLK_x,     SDLK_x,
-	   SDLK_INSERT, SDLK_DELETE},
-	  {SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i, SDLK_o, SDLK_p, SDLK_x,    SDLK_x,     SDLK_x,
-	   SDLK_HOME, SDLK_END, SDLK_END},
-	  {SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k, SDLK_l, SDLK_x, SDLK_x,    SDLK_x,     SDLK_x,
-	   SDLK_LEFT, SDLK_LEFT, SDLK_END},
-	  {SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_x, SDLK_x, SDLK_x, SDLK_x,     SDLK_x,
-	   SDLK_RIGHT, SDLK_RIGHT, SDLK_END},
-	  {SDLK_LCTRL, SDLK_LSUPER, SDLK_LALT, SDLK_SPACE, SDLK_RALT, SDLK_RSUPER, SDLK_MENU, SDLK_RCTRL, SDLK_END, SDLK_END, SDLK_END, SDLK_END, SDLK_END, SDLK_END, SDLK_END, SDLK_END, SDLK_END}
-	  
-	},{
-	  {SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8, SDLK_9, SDLK_0, SDLK_PLUS, SDLK_x,     SDLK_x,
-	   SDLK_INSERT, SDLK_DELETE},
-	  {SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i, SDLK_o, SDLK_p, SDLK_x,    SDLK_x,     SDLK_x,
-	   SDLK_HOME, SDLK_END, SDLK_END},
-	  {SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k, SDLK_l, SDLK_x, SDLK_x,    SDLK_x,     SDLK_x,
-	   SDLK_LEFT, SDLK_LEFT, SDLK_END},
-	  {SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_x, SDLK_x, SDLK_x, SDLK_x,     SDLK_x,
-	   SDLK_RIGHT, SDLK_RIGHT, SDLK_END},
-	  {SDLK_LCTRL, SDLK_LSUPER, SDLK_LALT, SDLK_SPACE, SDLK_RALT, SDLK_RSUPER, SDLK_MENU, SDLK_RCTRL, SDLK_END, SDLK_END, SDLK_END, SDLK_END, SDLK_END, SDLK_END, SDLK_END, SDLK_END, SDLK_END}
-	  
+		{SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8,     SDLK_9,      SDLK_0,     SDLK_MINUS,    SDLK_EQUALS, SDLK_x, SDLK_x,      SDLK_F1},
+		{SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,     SDLK_o,      SDLK_p,     SDLK_x,        SDLK_x,      SDLK_x, SDLK_DELETE, SDLK_F3},
+		{SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,     SDLK_l,      SDLK_COLON, SDLK_SEMICOLON,SDLK_x,      SDLK_x, SDLK_x,      SDLK_F5},
+		{SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_x,        SDLK_x,      SDLK_UP,             SDLK_F7},
+		{SDLK_x, SDLK_LALT, SDLK_RSHIFT, SDLK_SPACE, SDLK_LEFT, SDLK_DOWN, SDLK_RIGHT}
+	}, {
+		{SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8,     SDLK_9,      SDLK_0,     SDLK_MINUS,    SDLK_EQUALS, SDLK_x, SDLK_x,      SDLK_F1},
+		{SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,     SDLK_o,      SDLK_p,     SDLK_x,        SDLK_x,      SDLK_x, SDLK_DELETE, SDLK_F3},
+		{SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,     SDLK_l,      SDLK_COLON, SDLK_SEMICOLON,SDLK_x,      SDLK_x, SDLK_x,      SDLK_F5},
+		{SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_x,        SDLK_x,      SDLK_UP,             SDLK_F7},
+		{SDLK_x, SDLK_LALT, SDLK_RSHIFT, SDLK_SPACE, SDLK_LEFT, SDLK_DOWN, SDLK_RIGHT}
 	}
 };
 
@@ -91,13 +80,12 @@ static int mod_state = 0;
 static int show_help = 0;
 
 void init_keyboard() {
-	for(int j = 0; j < NUM_ROWS; j++)
-		for(int i = 0; i < NUM_KEYS; i++)
-			toggled[j][i] = 0;
-	selected_i = selected_j = shifted = location = 0;
-	active = 1;
-	mod_state = 0;
-
+  for(int j = 0; j < NUM_ROWS; j++)
+    for(int i = 0; i < NUM_KEYS; i++)
+      toggled[j][i] = 0;
+  selected_i = selected_j = shifted = location = 0;
+  active = 1;
+  mod_state = 0;
 }
 
 char* help = 
@@ -128,6 +116,11 @@ char* help =
 "  grep <pattern> <f>    find in files\n"
 ;
 
+int strlensym(char *str) {
+  if(strncmp(str,"S:",2) == 0) return 1;
+  else return strlen(str);
+}
+
 void draw_keyboard(SDL_Surface* surface) {
   //	unsigned short bg_color = SDL_MapRGB(surface->format, 64, 64, 64);
   	unsigned short bg_color = SDL_MapRGB(surface->format, 180, 180, 180);
@@ -139,17 +132,17 @@ void draw_keyboard(SDL_Surface* surface) {
 	int length;
 	int is_sym = 0;
 	if(show_help) {
-		SDL_FillRect(surface, NULL, bg_color);
-		draw_string(surface, "SDL Terminal by Benob, based on st-sdl", 42, 10, sel_toggled_color);
-		draw_string(surface, help, 8, 28, sel_color);
-		return;
+	  SDL_FillRect(surface, NULL, bg_color);
+	  draw_string(surface, "SDL Terminal by Benob, based on st-sdl", 42, 10, sel_toggled_color);
+	  draw_string(surface, help, 8, 28, sel_color);
+	  return;
 	}
 	if(!active) return;
 	int total_length = -1;
 	for(int i = 0; i < NUM_KEYS && syms[0][0][i]; i++) {
-		total_length += (1 + strlen(syms[0][0][i])) * 6;
+	  total_length += (1 + strlensym(syms[0][0][i])) * 6;
 	}
-	total_length -= 18;
+
 	int center_x = (surface->w - total_length) / 2;
 	int x = center_x, y = surface->h - 8 * (NUM_ROWS) - 16;
 	if(location == 1) y = 16;
@@ -164,7 +157,7 @@ void draw_keyboard(SDL_Surface* surface) {
 	      length = 1;
 	      is_sym = 1;
 	    } else {
-	      length = strlen(syms[shifted][j][i]);
+	      length = strlensym(syms[shifted][j][i]);
 	      is_sym = 0;
 	    }	
 	    SDL_Rect r2 = {x - 2, y - 1, length * 6 + 4, 7};
@@ -221,27 +214,23 @@ void update_modstate(int key, int state) {
 		else if(key == SDLK_CAPSLOCK) mod_state &= ~KMOD_CAPS;
 		else if(key == SDLK_MODE) mod_state &= ~KMOD_MODE;
 	}
-	SDL_SetModState(mod_state);
+	SDL_SetModState((SDLMod) mod_state);
 }
 
 void simulate_key(int key, int state) {
 	update_modstate(key, state);
 	unsigned short unicode = 0;
+	SDL_Event event;
 	if(key < 128) {
-		unicode = key;
+	  unicode = key;
 	}
-	SDL_Event event = {
-		.key = {
-			.type = SDL_KEYDOWN,
-			.state = SDL_PRESSED,
-			.keysym = {
-				.scancode = 0,
-				.sym = key,
-				.mod = KMOD_SYNTHETIC,
-				.unicode = unicode,
-			}
-		}
-	};
+	event.key.type = SDL_KEYDOWN;
+	event.key.state = SDL_PRESSED;
+	event.key.keysym.scancode = 0;
+	event.key.keysym.sym = (SDLKey) key;
+	event.key.keysym.mod = (SDLMod) KMOD_SYNTHETIC;
+	event.key.keysym.unicode = unicode;
+	
 	if(state == STATE_TYPED) {
 		SDL_PushEvent(&event);
 		event.key.type = SDL_KEYUP;
@@ -251,21 +240,21 @@ void simulate_key(int key, int state) {
 		event.key.state = SDL_RELEASED;
 	}
 	SDL_PushEvent(&event);
-	//printf("%d\n", key);
+	printf("%d\n", key);
 }
 
 int compute_visual_offset(int col, int row) {
 	int sum = 0;
-	for(int i = 0; i < col; i++) sum += 1 + strlen(syms[0][row][i]);
-	sum += (1 + strlen(syms[0][row][col])) / 2;
+	for(int i = 0; i < col; i++) sum += 1 + strlensym(syms[0][row][i]);
+	sum += (1 + strlensym(syms[0][row][col])) / 2;
 	return sum;
 }
 
 int compute_new_col(int visual_offset, int old_row, int new_row) {
 	int new_sum = 0;
 	int new_col = 0;
-	while(new_col < row_length[new_row] - 1 && new_sum + (1 + strlen(syms[0][new_row][new_col])) / 2 < visual_offset) {
-		new_sum += 1 + strlen(syms[0][new_row][new_col]);
+	while(new_col < row_length[new_row] - 1 && new_sum + (1 + strlensym(syms[0][new_row][new_col])) / 2 < visual_offset) {
+		new_sum += 1 + strlensym(syms[0][new_row][new_col]);
 		new_col++;
 	}
 	return new_col;
@@ -273,71 +262,83 @@ int compute_new_col(int visual_offset, int old_row, int new_row) {
 
 int handle_keyboard_event(SDL_Event* event) {
 	static int visual_offset = 0;
-	if(event->key.type == SDL_KEYDOWN && !(event->key.keysym.mod & KMOD_SYNTHETIC) && event->key.keysym.sym == KEY_ACTIVATE) {
-		active = ! active;
-		return 1;
-	}
-	if(!active) return 0;
-	if((event->key.type == SDL_KEYUP || event->key.type == SDL_KEYDOWN) && event->key.keysym.mod & KMOD_SYNTHETIC) return 0;
 
-	if(event->key.type == SDL_KEYDOWN && event->key.state == SDL_PRESSED) {
-		if(show_help) {
-			// do nothing
-		} else if(event->key.keysym.sym == KEY_QUIT) {
-			exit(0);
-		} else if(event->key.keysym.sym == KEY_HELP) {
-			show_help = 1;
-		} else if(event->key.keysym.sym == KEY_UP && selected_j > 0) {
-			selected_i = compute_new_col(visual_offset, selected_j, selected_j - 1);
-			selected_j--;
-			//selected_i = selected_i * row_length[selected_j] / row_length[selected_j + 1];
-		} else if(event->key.keysym.sym == KEY_DOWN && selected_j < NUM_ROWS - 1) {
-			selected_i = compute_new_col(visual_offset, selected_j, selected_j + 1);
-			selected_j++;
-			//selected_i = selected_i * row_length[selected_j] / row_length[selected_j - 1];
-		} else if(event->key.keysym.sym == KEY_LEFT && selected_i > 0) {
-			selected_i--;
-			visual_offset = compute_visual_offset(selected_i, selected_j);
-		} else if(event->key.keysym.sym == KEY_RIGHT && selected_i < row_length[selected_j] - 1) {
-			selected_i++;
-			visual_offset = compute_visual_offset(selected_i, selected_j);
-		} else if(event->key.keysym.sym == KEY_SHIFT) {
-			shifted = 1;
-			toggled[4][2] = 1;
-			update_modstate(SDLK_LSHIFT, STATE_DOWN);
-		} else if(event->key.keysym.sym == KEY_LOCATION) {
-			location = !location;
-		} else if(event->key.keysym.sym == KEY_BACKSPACE) {
-			simulate_key(SDLK_BACKSPACE, STATE_TYPED);
-		} else if(event->key.keysym.sym == KEY_TOGGLE) {
-			toggled[selected_j][selected_i] = 1 - toggled[selected_j][selected_i];
-			if(toggled[selected_j][selected_i]) simulate_key(keys[shifted][selected_j][selected_i], STATE_DOWN);
-			else simulate_key(keys[shifted][selected_j][selected_i], STATE_UP);
-			if(selected_j == 4 && (selected_i == 0 || selected_i == 11)) shifted = toggled[selected_j][selected_i];
-		} else if(event->key.keysym.sym == KEY_ENTER) {
-			int key = keys[shifted][selected_j][selected_i];
-			if(mod_state & KMOD_CTRL) {
-				if (key >= 64 && key < 64 + 32) simulate_key(key - 64, STATE_DOWN);
-				else if (key >= 97 && key < 97 + 31) simulate_key(key - 96, STATE_DOWN);
-			} else if(mod_state & KMOD_SHIFT && key >= SDLK_a && key <= SDLK_z) {
-				simulate_key(key - SDLK_a + 'A', STATE_TYPED);
-			} else {
-				simulate_key(key, STATE_TYPED);
-			}
-		}
+	if(  event->key.type       == SDL_KEYDOWN &&
+	   !(event->key.keysym.mod  & KMOD_SYNTHETIC) &&
+	     event->key.keysym.sym == KEY_ACTIVATE) {
+	  active = ! active;
+	  return 1;
+	}
+	
+	if(!active) {
+	  return 0;
+	}
+	
+	if((event->key.type == SDL_KEYUP ||
+	    event->key.type == SDL_KEYDOWN)
+	   &&
+	   event->key.keysym.mod & KMOD_SYNTHETIC) {
+	  return 0;
+	}
+	  
+	if(event->key.type  == SDL_KEYDOWN &&
+	   event->key.state == SDL_PRESSED) {
+	  
+	  if(event->key.keysym.sym == KEY_QUIT) {
+	    exit(0);
+	  } else if(event->key.keysym.sym == KEY_HELP) {
+	    show_help = 1;
+	  } else if(event->key.keysym.sym == KEY_UP && selected_j > 0) {
+	    selected_i = compute_new_col(visual_offset, selected_j, selected_j - 1);
+	    selected_j--;
+	    //selected_i = selected_i * row_length[selected_j] / row_length[selected_j + 1];
+	  } else if(event->key.keysym.sym == KEY_DOWN && selected_j < NUM_ROWS - 1) {
+	    selected_i = compute_new_col(visual_offset, selected_j, selected_j + 1);
+	    selected_j++;
+	    //selected_i = selected_i * row_length[selected_j] / row_length[selected_j - 1];
+	  } else if(event->key.keysym.sym == KEY_LEFT && selected_i > 0) {
+	    selected_i--;
+	    visual_offset = compute_visual_offset(selected_i, selected_j);
+	  } else if(event->key.keysym.sym == KEY_RIGHT && selected_i < row_length[selected_j] - 1) {
+	    selected_i++;
+	    visual_offset = compute_visual_offset(selected_i, selected_j);
+	  } else if(event->key.keysym.sym == KEY_SHIFT) {
+	    shifted = 1;
+	    toggled[4][2] = 1;
+	    update_modstate(SDLK_LSHIFT, STATE_DOWN);
+	  } else if(event->key.keysym.sym == KEY_LOCATION) {
+	    location = !location;
+	  } else if(event->key.keysym.sym == KEY_BACKSPACE) {
+	    simulate_key(SDLK_BACKSPACE, STATE_TYPED);
+	  } else if(event->key.keysym.sym == KEY_TOGGLE) {
+	    toggled[selected_j][selected_i] = 1 - toggled[selected_j][selected_i];
+	    if(toggled[selected_j][selected_i]) simulate_key(keys[shifted][selected_j][selected_i], STATE_DOWN);
+	    else simulate_key(keys[shifted][selected_j][selected_i], STATE_UP);
+	    if(selected_j == 4 && (selected_i == 0 || selected_i == 11)) shifted = toggled[selected_j][selected_i];
+	  } else if(event->key.keysym.sym == KEY_ENTER) {
+	    int key = keys[shifted][selected_j][selected_i];
+	    if(mod_state & KMOD_CTRL) {
+	      if (key >= 64 && key < 64 + 32) simulate_key(key - 64, STATE_DOWN);
+	      else if (key >= 97 && key < 97 + 31) simulate_key(key - 96, STATE_DOWN);
+	    } else if(mod_state & KMOD_SHIFT && key >= SDLK_a && key <= SDLK_z) {
+	      simulate_key(key - SDLK_a + 'A', STATE_TYPED);
+	    } else {
+	      simulate_key(key, STATE_TYPED);
+	    }
+	  }
 	} else if(event->key.type == SDL_KEYUP || event->key.state == SDL_RELEASED) {
-		if(show_help) {
-			show_help = 0;
-		} else if(event->key.keysym.sym == KEY_SHIFT) {
-			shifted = 0;
-			toggled[4][2] = 0;
-			update_modstate(SDLK_LSHIFT, STATE_UP);
-		}
+	  if(show_help) {
+	    show_help = 0;
+	  } else if(event->key.keysym.sym == KEY_SHIFT) {
+	    shifted = 0;
+	    toggled[4][2] = 0;
+	    update_modstate(SDLK_LSHIFT, STATE_UP);
+	  }
 	}
 	return 1;
 }
 
-//#ifdef TEST_KEYBOARD
+#ifdef TEST_KEYBOARD
 
 int main() {
 	SDL_Init( SDL_INIT_EVERYTHING );
@@ -369,4 +370,4 @@ int main() {
 	SDL_Quit();
 }
 
-//#endif
+#endif

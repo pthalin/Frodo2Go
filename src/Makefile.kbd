@@ -1,18 +1,15 @@
-# st version
-VERSION = 0.0
-
 # includes and libs
 INCS = -I. 
 LIBS = -lc -lutil
 
 # flags
-CPPFLAGS = -m32 -g -DVERSION=\"${VERSION}\"
-CFLAGS += -m32 -g -Wall ${INCS} ${CPPFLAGS} -DRS97 -fPIC
+CPPFLAGS = -DTEST_KEYBOARD
+CFLAGS  += -m32 -g -Wall ${INCS} ${CPPFLAGS}
 LDFLAGS += -m32 -g ${LIBS} -lSDL 
 
 # compiler and linker
 CC ?= cc
-
+CXX = g++
 
 SRC = keyboard.c font.c 
 OBJ = ${SRC:.c=.o}
@@ -22,17 +19,17 @@ options:
 	@echo kbd build options:
 	@echo "CFLAGS   = ${CFLAGS}"
 	@echo "LDFLAGS  = ${LDFLAGS}"
-	@echo "CC       = ${CC}"
+	@echo "CXX       = ${CXX}"
 
 .c.o:
-	@echo CC $<
-	@${CC} -c ${CFLAGS} $<
+	@echo CXX $<
+	@${CXX} -c ${CFLAGS} $<
 
 
 
 kbd: 	${OBJ}
-	@echo CC -o $@
-	@${CC} -o $@ ${OBJ} ${LDFLAGS}
+	@echo CXX -o $@
+	@${CXX} -o $@ ${OBJ} ${LDFLAGS}
 
 clean:
 	@echo cleaning
