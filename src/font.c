@@ -4,9 +4,23 @@
 #define CHAR_ROM_SIZE 4096
 #include "Char_ROM.h"
 
+
+static const uint8 special_char[] = {
+  // 0     1     2    3      4     5     6     7
+  0x18, 0x3c, 0x66, 0xc3, 0x66, 0x66, 0x00, 0x00, //UP
+  0x00, 0x66, 0x66, 0xc3, 0x66, 0x3c, 0x18, 0x00, //DOWN
+  0x0c, 0x1c, 0x37, 0x60, 0x37, 0x1c, 0x0c, 0x00, //LEFT
+  0x18, 0x1c, 0x76, 0x03, 0x76, 0x1c, 0x18, 0x00 //RIGHT
+};
+
+
 void draw_sym(SDL_Surface* surface, unsigned int symbol, int x, int y, unsigned short color) {
   x += (8 - 1) * 1;
-  const unsigned char* ptr = builtin_char_rom + symbol * 8;
+  const unsigned char* ptr;
+  if (symbol >= 4096)
+    ptr = special_char + (symbol-4096) * 8;
+  else
+    ptr = builtin_char_rom + symbol * 8;
   int flip = 0;
   for(int i = 0, ys = 0; i < 7; i++, ptr++, ys += 1) //ROW 
     for(int col = 0, xs = x - col -1; col < 8; col++, xs -= 1)

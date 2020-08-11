@@ -43,13 +43,13 @@ static SDLKey keys[2][NUM_ROWS][NUM_KEYS] = {
 		{SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,     SDLK_o,      SDLK_p,     SDLK_x,        SDLK_x,      SDLK_x, SDLK_DELETE, SDLK_F3},
 		{SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,     SDLK_l,      SDLK_COLON, SDLK_SEMICOLON,SDLK_x,      SDLK_x, SDLK_x,      SDLK_F5},
 		{SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_x,        SDLK_x,      SDLK_UP,             SDLK_F7},
-		{SDLK_x, SDLK_LALT, SDLK_RSHIFT, SDLK_SPACE, SDLK_LEFT, SDLK_DOWN, SDLK_RIGHT}
+		{SDLK_x, SDLK_SPACE, SDLK_LEFT, SDLK_DOWN, SDLK_RIGHT,   SDLK_RSHIFT, SDLK_LALT}
 	}, {
 		{SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8,     SDLK_9,      SDLK_0,     SDLK_MINUS,    SDLK_EQUALS, SDLK_x, SDLK_x,      SDLK_F1},
 		{SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,     SDLK_o,      SDLK_p,     SDLK_x,        SDLK_x,      SDLK_x, SDLK_DELETE, SDLK_F3},
 		{SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,     SDLK_l,      SDLK_COLON, SDLK_SEMICOLON,SDLK_x,      SDLK_x, SDLK_x,      SDLK_F5},
 		{SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_x,        SDLK_x,      SDLK_UP,             SDLK_F7},
-		{SDLK_x, SDLK_LALT, SDLK_RSHIFT, SDLK_SPACE, SDLK_LEFT, SDLK_DOWN, SDLK_RIGHT}
+		{SDLK_x, SDLK_SPACE, SDLK_LEFT, SDLK_DOWN, SDLK_RIGHT,   SDLK_RSHIFT, SDLK_LALT}
 	}
 };
 
@@ -58,14 +58,14 @@ static char* syms[2][NUM_ROWS][NUM_KEYS] = {
 	  {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0",    "+",     "-", "S:28", "HOM", "f1", NULL},
 	  {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",    "S:256", "*", "S:31", "DEL", "f3", NULL},
 	  {"A", "S", "D", "F", "G", "H", "J", "K", "L", ":",    ";",     "=", "S:30", "RES", "f5", NULL},
-	  {"Z", "X", "C", "V", "B", "N", "M", ",", ".", "/",    " ",     "CTRL", "UP",       "f7", NULL},
-	  {"R/S", "C=", "SHIFT", "   SPACE   ",                            "L", "DN", "R ", NULL}
+	  {"Z", "X", "C", "V", "B", "N", "M", ",", ".", "/",    "S:4096",     "   ",    "CTL", "f7", NULL},
+	  {"R/S", "    SPACE    ",                            "S:4098", "S:4097", "S:4099","SHIFT", "C=",NULL}
 	}, {
 	  {"!", "\"","#", "$", "%", "&", "'", "(", ")", "0",    "+",     "-", "S:28", "CLR", "f2", NULL},
 	  {"q", "w", "e", "r", "t", "y", "u", "i", "o", "p",    "S:256", "*", "S:31", "INS", "f4", NULL},
 	  {"a", "s", "d", "f", "g", "h", "j", "k", "l", "S:27", "S:29",  "=", "S:30", "RES", "f6", NULL},
-	  {"z", "x", "c", "v", "b", "n", "m", "<", ">", "?",    " ",    "CTRL", "UP",       "f8", NULL},
-	  {"R/S", "C=", "SHIFT", "   SPACE   ",                            "L", "DN", "R ", NULL}
+	  {"z", "x", "c", "v", "b", "n", "m", "<", ">", "?",      "U",     "   ",    "CTL", "f7", NULL},
+	  {"R/S", "    SPACE    ",                            "L", "D", "R","SHIFT", "C=",NULL}
 
 	}
 };
@@ -98,22 +98,7 @@ char* help =
 "  Y: change keyboard location (top/bottom)\n"
 "  X: show / hide keyboard\n"
 "  SELECT: quit\n"
-"  START: show this help\n\n"
-"Cheatcheet (tutorial at www.shellscript.sh):\n"
-"  TAB key         complete path\n"
-"  UP/DOWN keys    navigate history\n"
-"  pwd             print current directory\n"
-"  ls              list files (-l for file size)\n"
-"  cd <d>          change directory (.. = go up)\n"
-"  cp <f> <d>      copy files (dest can be dir)\n"
-"  mv <f> <d>      move files (dest can be dir)\n"
-"  rm <f>          remove files (use -rf for dir)\n"
-"  top             see running processes (q to quit)\n"
-"  more <f>        see content of text file\n"
-"  file <f>        see type of file\n"
-"  opkg install <f.ipk>  install package\n"
-"  opkg remove <f>       remove package\n"
-"  grep <pattern> <f>    find in files\n"
+"  START: show this help\n"
 ;
 
 int strlensym(char *str) {
@@ -133,7 +118,7 @@ void draw_keyboard(SDL_Surface* surface) {
 	int is_sym = 0;
 	if(show_help) {
 	  SDL_FillRect(surface, NULL, bg_color);
-	  draw_string(surface, "SDL Terminal by Benob, based on st-sdl", 42, 10, sel_toggled_color);
+	  //draw_string(surface, "SDL Terminal by Benob, based on st-sdl", 42, 10, sel_toggled_color);
 	  draw_string(surface, help, 8, 28, sel_color);
 	  return;
 	}
@@ -304,7 +289,7 @@ int handle_keyboard_event(SDL_Event* event) {
 	    visual_offset = compute_visual_offset(selected_i, selected_j);
 	  } else if(event->key.keysym.sym == KEY_SHIFT) {
 	    shifted = 1;
-	    toggled[4][2] = 1;
+	    toggled[4][5] = 1;
 	    update_modstate(SDLK_LSHIFT, STATE_DOWN);
 	  } else if(event->key.keysym.sym == KEY_LOCATION) {
 	    location = !location;
@@ -331,7 +316,7 @@ int handle_keyboard_event(SDL_Event* event) {
 	    show_help = 0;
 	  } else if(event->key.keysym.sym == KEY_SHIFT) {
 	    shifted = 0;
-	    toggled[4][2] = 0;
+	    toggled[4][5] = 0;
 	    update_modstate(SDLK_LSHIFT, STATE_UP);
 	  }
 	}
