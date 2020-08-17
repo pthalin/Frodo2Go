@@ -1,4 +1,6 @@
-#include "sysdeps.h"
+typedef unsigned char uint8;
+typedef signed char int8;
+
 #include <SDL/SDL.h>
 #include "font.h"
 #define CHAR_ROM_SIZE 4096
@@ -13,6 +15,21 @@ static const uint8 special_char[] = {
   0x18, 0x1c, 0x76, 0x03, 0x76, 0x1c, 0x18, 0x00 //RIGHT
 };
 
+char asci_rom(const char a) {
+  switch(a) {
+  case '@': return 0;
+  case '[': return 28;
+  case '~': return 29; //Pound
+  case ']': return 30;
+  case '}': return 31; //Arrow up
+  case '{': return 32; //Arrow left
+  default:
+    //    if ((a >= 'a') && ( a <= 'z')) return (a-96);
+    if ((a >= 'A') && ( a <= 'Z')) return (a-64);
+    if ((a >= ' ') && ( a <= '?')) return (a-1);
+    return 0;
+  }
+}
 
 void draw_sym(SDL_Surface* surface, unsigned int symbol, int x, int y, unsigned short color) {
   x += (8 - 1) * 1;
@@ -43,12 +60,15 @@ void draw_char(SDL_Surface* surface, unsigned char symbol, int x, int y, unsigne
   case ';':
     move_up = 1;
   }
+  // s = asci_rom(symbol) +  128;
+  
   if(symbol >= 97) {
     s=symbol-96+(2*8*16); //lowe case
     move_up = 1;
   } else {
     s=symbol+(16*16); //UPPER CASE
   }
+
   const unsigned char* ptr = builtin_char_rom + s * 8;
 
   for(int i = 0, ys = 0; i < 8; i++, ptr++, ys += 1) //ROW 
@@ -71,3 +91,5 @@ void draw_string(SDL_Surface* surface, const char* text, int orig_x, int orig_y,
     text++;
   }
 }
+
+

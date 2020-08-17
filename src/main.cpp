@@ -24,7 +24,7 @@
 #include "C64.h"
 #include "Display.h"
 #include "Prefs.h"
-#include "SAM.h"
+//#include "SAM.h"
 
 
 // Global variables
@@ -63,7 +63,8 @@ char AppDirPath[1024];	// Path of application directory
 
 void Frodo::load_rom(const char *which, const char *path, uint8 *where, size_t size, const uint8 *builtin)
 {
-	FILE *f = fopen(path, "rb");
+#ifdef EXT_ROM_LOAD
+  FILE *f = fopen(path, "rb");
 	if (f) {
 		size_t actual = fread(where, 1, size, f);
 		fclose(f);
@@ -73,6 +74,7 @@ void Frodo::load_rom(const char *which, const char *path, uint8 *where, size_t s
 
 	// Use builtin ROM
 	printf("%s ROM file (%s) not readable, using builtin.\n", which, path);
+#endif
 	memcpy(where, builtin, size);
 }
 

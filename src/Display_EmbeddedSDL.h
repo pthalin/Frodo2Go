@@ -21,7 +21,9 @@
  */
 
 #include "C64.h"
-#include "SAM.h"
+//#include "SAM.h"
+
+#include "keyboard.h"
 #include "main.h"
 #include "Version.h"
 
@@ -99,6 +101,8 @@ const int height = 240;
 
 bool isGuiAvailable = true; // TODO from main.cpp
 bool GUIOpened = false;
+bool keyboard_enable = false;
+bool keyboard_pos = true;
 
 static SDL_Thread *GUIthread = NULL;
 static const int GUI_RETURN_INFO = (SDL_USEREVENT+1);
@@ -342,14 +346,33 @@ void C64Display::Update(void)
 		return;
 	int iOffsetX = (DISPLAY_X - surf->w) / 2;
 	int iOffsetY = (DISPLAY_Y - surf->h) / 2;
+	
 #ifdef STATUS_DISP
 	for (int j=0; j < surf->h - 17; j++)
 #else
 	  for (int j=0; j < surf->h; j++)
 #endif
 	{
-	  memcpy(static_cast<char*>(surf->pixels)+surf->w*j, buffer+iOffsetX+DISPLAY_X*(j+iOffsetY), surf->w);
+	   memcpy(static_cast<char*>(surf->pixels)+surf->w*j, buffer+iOffsetX+DISPLAY_X*(j+iOffsetY), surf->w);
 	}
+	SDL_Surface* kb_buffer = SDL_CreateRGBSurface(SDL_SWSURFACE, 200, 50, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+	if (keyboard_enable) {
+	  draw_keyboard(kb_buffer);
+	  SDL_Rect rect;
+	  rect.x = 0;
+	  rect.y = 0;
+	  rect.w = 200;
+	  rect.h = 42;
+	  
+	  SDL_Rect drect;
+	  drect.x = 60;
+	  if(keyboard_pos)
+	    drect.y = 197;
+	  else
+	    drect.y = 0;
+	  SDL_BlitSurface(kb_buffer, &rect, screen, &drect);
+	}
+	
 #ifdef STATUS_DISP
 	// Draw speedometer/LEDs
 	SDL_Rect r = {0, (surf->h - 17), DISPLAY_X, 15};
@@ -517,6 +540,7 @@ int C64Display::BitmapXMod(void)
 static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev_matrix, uint8 *joystick)
 {
 	int c64_key = -1;
+	/*
 	if (tab_pressed)
 	{
 		// Function and run/stop key emulation on Zaurus keyboard
@@ -533,7 +557,7 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 			case SDLK_o: c64_key = MATRIX(7,7); break;
 		}
 	}
-	else
+	else*/
 	{
 		switch (key)
 		{
@@ -564,9 +588,8 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 			case SDLK_y: c64_key = MATRIX(3,1); break;
 			case SDLK_z: c64_key = MATRIX(1,4); break;
 
-			case SDLK_0: c64_key = MATRIX(4,3); break;
+
 			case SDLK_1: c64_key = MATRIX(7,0); break;
-		        case SDLK_LALT: c64_key = MATRIX(7,0); break;
 			case SDLK_2: c64_key = MATRIX(7,3); break;
 			case SDLK_3: c64_key = MATRIX(1,0); break;
 			case SDLK_4: c64_key = MATRIX(1,3); break;
@@ -575,31 +598,44 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 			case SDLK_7: c64_key = MATRIX(3,0); break;
 			case SDLK_8: c64_key = MATRIX(3,3); break;
 			case SDLK_9: c64_key = MATRIX(4,0); break;
+			case SDLK_0: c64_key = MATRIX(4,3); break;
+			  
+  		        case SDLK_EXCLAIM: c64_key = MATRIX(7,0) |0x80; break;
+         	        case SDLK_QUOTEDBL: c64_key = MATRIX(7,3) | 0x80; break;
+              		case SDLK_HASH: c64_key = MATRIX(1,0)|0x80; break;
+  			case SDLK_DOLLAR: c64_key = MATRIX(1,3)|0x80; break;
+        		case SDLK_F15: c64_key = MATRIX(2,0)|0x80; break; //%
+			case SDLK_AMPERSAND: c64_key = MATRIX(2,3); break;
+			case SDLK_QUOTE: c64_key = MATRIX(3,0); break;
+			case SDLK_LEFTPAREN: c64_key = MATRIX(3,3); break;
+			case SDLK_RIGHTPAREN: c64_key = MATRIX(4,0); break;
 
+			  
 			case SDLK_SPACE: c64_key = MATRIX(7,4); break;
 			case SDLK_BACKQUOTE: c64_key = MATRIX(7,1); break;
 			case SDLK_BACKSLASH: c64_key = MATRIX(6,6); break;
 			case SDLK_COMMA: c64_key = MATRIX(5,7); break;
 			case SDLK_PERIOD: c64_key = MATRIX(5,4); break;
-			case SDLK_MINUS: c64_key = MATRIX(5,0); break;
-			case SDLK_EQUALS: c64_key = MATRIX(5,3); break;
+			case SDLK_MINUS: c64_key = MATRIX(5,3); break;
+	        	case SDLK_PLUS: c64_key = MATRIX(5,0); break;
+			case SDLK_EQUALS: c64_key = MATRIX(6,5); break;
 			case SDLK_LEFTBRACKET: c64_key = MATRIX(5,6); break;
 			case SDLK_RIGHTBRACKET: c64_key = MATRIX(6,1); break;
-			case SDLK_SEMICOLON: c64_key = MATRIX(5,5); break;
-			case SDLK_QUOTE: c64_key = MATRIX(6,2); break;
+			case SDLK_SEMICOLON: c64_key = MATRIX(6,2); break;
 			case SDLK_SLASH: c64_key = MATRIX(6,7); break;
 
 			  //case SDLK_ESCAPE: c64_key = MATRIX(7,7); break;
 			case SDLK_RETURN: c64_key = MATRIX(0,1); break;
-			case SDLK_BACKSPACE: case SDLK_DELETE: c64_key = MATRIX(0,0); break;
+			case SDLK_BACKSPACE:c64_key = MATRIX(0,0)|0x80; break;
+		        case SDLK_DELETE: c64_key = MATRIX(0,0); break;
 			case SDLK_INSERT: c64_key = MATRIX(6,3); break;
 			case SDLK_HOME: c64_key = MATRIX(6,3); break;
 			case SDLK_END: c64_key = MATRIX(6,0); break;
 			case SDLK_PAGEUP: c64_key = MATRIX(6,0); break;
 			case SDLK_PAGEDOWN: c64_key = MATRIX(6,5); break;
 
-			  //case SDLK_LCTRL: c64_key = MATRIX(7,2); break;
-			  //case SDLK_RCTRL: c64_key = MATRIX(7,5); break;
+			case SDLK_LCTRL: c64_key = MATRIX(7,2); break;
+		        case SDLK_RCTRL: c64_key = MATRIX(7,5); break;
 			case SDLK_LSHIFT: c64_key = MATRIX(1,7); break;
 			case SDLK_RSHIFT: c64_key = MATRIX(6,4); break;
 			  //case SDLK_LALT: case SDLK_LMETA: c64_key = MATRIX(7,5); break;
@@ -633,9 +669,8 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 			case SDLK_KP_ENTER: c64_key = MATRIX(0,1); break;
 
 			// Support for Zaurus/Qtopia
-			case SDLK_QUOTEDBL: c64_key = MATRIX(7,3) | 0x80; break;
+
 			case SDLK_ASTERISK: c64_key = MATRIX(6,1); break;
-			case SDLK_DOLLAR: c64_key = MATRIX(1,3) | 0x80; break;
 			case SDLK_COLON: c64_key = MATRIX(5,5); break;
 			case SDLK_AT: c64_key = MATRIX(5,6); break;
 		}
@@ -646,6 +681,7 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 	// Zaurus/Qtopia joystick emulation
 	//if (joy_emu != 0)
 	//{
+	if (!keyboard_enable) {
 		switch (key)
 		  {
   // case SDLK_LCTRL: c64_key = 0x10 | 0x40; break; //A fire
@@ -658,6 +694,7 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 			case SDLK_LEFT:  c64_key = 0x04 | 0x40; break;
 			case SDLK_RIGHT: c64_key = 0x08 | 0x40; break;
 		}
+	}
 		//}
 
 	// Handle joystick emulation
@@ -736,7 +773,11 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 	SDL_PumpEvents();
 	while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, eventmask))
 	{
-		if (GUIOpened) 
+	  
+	  handle_keyboard_event(&event);
+	  SDL_PumpEvents();
+	    
+	  if (GUIOpened) 
 		{
 			if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) 
 			{
@@ -800,7 +841,8 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 				break;
 			// Key pressed
 			case SDL_KEYDOWN:
-//				fprintf(stderr, "SDL-Key: %d\n", event.key.keysym.sym);
+			  
+			  //			fprintf(stderr, "SDL-Key: %d\n", event.key.keysym.sym);
 			  //if (tab_pressed && event.key.keysym.sym == SDLK_j)
 			        if (event.key.keysym.sym == SDLK_ESCAPE)
 				{
@@ -809,33 +851,47 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 					else
 						joy_emu = 0;
 				}
+				/*
 				if (tab_pressed && event.key.keysym.sym == SDLK_p)
 				{
 					//  NMI (Restore)
 					TheC64->NMI();
 				}
+				*/
 				else
 				{
 					switch (event.key.keysym.sym)
 					{
-						case SDLK_TAB:
-							tab_pressed = true;
-							break;
+					  //case SDLK_TAB:
+					  //tab_pressed = true;
+					  //break;
 
-						case SDLK_F9:	// F9: Invoke SAM
-							SAM(TheC64);
-							break;
+					  //case SDLK_F9:	// F9: Invoke SAM
+					  //SAM(TheC64);
+					  //break;
 
-						case SDLK_RCTRL:	// F10: Quit
+						case SDLK_RCTRL:	// R: Exit
 							// Iconify not implemented in Qtopia SDL yet. Quit instead show gui.
 							//SDL_WM_IconifyWindow();
 							quit_requested = true;
 							break;
+					case SDLK_RETURN: // START
+					  if (!(event.key.keysym.mod & KMOD_SYNTHETIC)) {
+					    if (keyboard_enable && keyboard_pos)
+					      keyboard_pos = false;
+					    else {
+					      keyboard_enable = !keyboard_enable;
+					      keyboard_pos = true;
+					    }
+					    
+					  }
+					  break;
 
 						case SDLK_F12:	// F12: Reset
 							TheC64->Reset();
 							break;
 
+							/*
 						case SDLK_KP_PLUS:	// '+' on keypad: Increase SkipFrames
 							ThePrefs.SkipFrames++;
 							break;
@@ -848,9 +904,12 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 						case SDLK_KP_MULTIPLY:	// '*' on keypad: Toggle speed limiter
 							ThePrefs.LimitSpeed = !ThePrefs.LimitSpeed;
 							break;
-
+							*/
 						default:
-							translate_key(event.key.keysym.sym, false, key_matrix, rev_matrix, joystick);
+						  if (event.key.keysym.mod & KMOD_SYNTHETIC) {
+						    translate_key(event.key.keysym.sym, false, key_matrix, rev_matrix, joystick);
+						    return;
+						  }
 							break;
 					}
 				}
@@ -858,13 +917,16 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 
 			// Key released
 			case SDL_KEYUP:
-				if (event.key.keysym.sym == SDLK_TAB)
+			  if (event.key.keysym.sym == SDLK_TAB)
 					tab_pressed = false;
 				else
-{
-					translate_key(event.key.keysym.sym, true, key_matrix, rev_matrix, joystick);
-}
-				break;
+				  
+				    if (event.key.keysym.mod & KMOD_SYNTHETIC) {
+				      translate_key(event.key.keysym.sym, true, key_matrix, rev_matrix, joystick);
+				      return;
+				    }
+
+			  break;
 
 			// Quit Frodo
 			case SDL_QUIT:
