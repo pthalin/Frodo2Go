@@ -627,10 +627,10 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 
 			case SDLK_BREAK: c64_key = MATRIX(7,7); break;
 			case SDLK_RETURN: c64_key = MATRIX(0,1); break;
-			case SDLK_BACKSPACE:c64_key = MATRIX(0,0)|0x80; break;
+			case SDLK_BACKSPACE:c64_key = MATRIX(0,0); break;
 			  //case SDLK_DELETE: c64_key = MATRIX(0,0); break;
 			  //case SDLK_INSERT: c64_key = MATRIX(6,3); break;
-		case SDLK_PRINT: c64_key = MATRIX(6,3);  printf("print\n"); break;
+		        case SDLK_PRINT: c64_key = MATRIX(6,3);  break;
 		  //	case SDLK_SYSREQ: c64_key = MATRIX(6,3)|0x80; printf("sysrq\n");break;
 			case SDLK_END: c64_key = MATRIX(6,0); break;
 			case SDLK_PAGEUP: c64_key = MATRIX(6,0); break;

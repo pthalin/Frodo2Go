@@ -17,44 +17,43 @@
 
 static int row_length[NUM_ROWS] = {15, 15, 15, 14, 7};
 static SDLKey keys[NUM_ROWS][NUM_KEYS] = {
-  {SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8,     SDLK_9,      SDLK_0,     SDLK_PLUS,     SDLK_MINUS,  SDLK_END, SDLK_PRINT, SDLK_F1},
+  {SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8,     SDLK_9,      SDLK_0,     SDLK_PLUS,     SDLK_MINUS,    SDLK_END,       SDLK_PRINT,     SDLK_F1},
   {SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,     SDLK_o,      SDLK_p,     SDLK_AT,       SDLK_ASTERISK, SDLK_BACKQUOTE, SDLK_BACKSPACE, SDLK_F3},
-  {SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,     SDLK_l,      SDLK_COLON, SDLK_SEMICOLON,SDLK_EQUALS,   SDLK_BACKSLASH, SDLK_SPACE,  SDLK_F5},
-  {SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_UP,       SDLK_SPACE, SDLK_LCTRL,             SDLK_F7},
-  {SDLK_BREAK, SDLK_SPACE, SDLK_LEFT, SDLK_DOWN, SDLK_RIGHT,   SDLK_RSHIFT, SDLK_F14}
+  {SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,     SDLK_l,      SDLK_COLON, SDLK_SEMICOLON,SDLK_EQUALS,   SDLK_BACKSLASH, SDLK_SPACE,     SDLK_F5},
+  {SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_UP,       SDLK_KP_ENTER, SDLK_LCTRL,                     SDLK_F7},
+  {SDLK_BREAK, SDLK_SPACE,                                                          SDLK_LEFT,  SDLK_DOWN,     SDLK_RIGHT,    SDLK_RSHIFT,    SDLK_F14}
 };
-
 
 
 char const *syms[4][NUM_ROWS][NUM_KEYS] = {
   
   {
-    {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0",    "+",     "-", "S:28", "HOM", "f1", NULL},
-    {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",    "S:256", "*", "S:31", "DEL", "f3", NULL},
-    {"A", "S", "D", "F", "G", "H", "J", "K", "L", ":",    ";",     "=", "S:30", "RES", "f5", NULL},
-    {"Z", "X", "C", "V", "B", "N", "M", ",", ".", "/",    "S:4096",     "   ",    "CTL", "f7", NULL},
-    {"R/S", "    SPACE    ",                            "S:4098", "S:4097", "S:4099","SHIFT", "C=",NULL}
+    {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "+",      "-", "S:28", "HOM", "f1", NULL},
+    {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "S:256",  "*", "S:31", "DEL", "f3", NULL},
+    {"A", "S", "D", "F", "G", "H", "J", "K", "L", ":", ";",      "=", "S:30", "RES", "f5", NULL},
+    {"Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "S:4096", "RET",       "CTL", "f7", NULL},
+    {"R/S", "    SPACE    ",                 "S:4098", "S:4097", "S:4099","SHIFT",    "C=",NULL}
   },
   {
-    {"!", "\"","#", "$", "%", "&", "'", "(", ")", "0",    "S:91",     "S:71", "S:105", "CLR", "f2", NULL},
-    {"P:Q", "P:W", "P:E", "P:R", "P:T", "P:Y", "P:U", "P:I", "P:O", "P:P",    "S:122", "P:C", "S:31", "INS", "f4", NULL},
-    {"P:A", "P:S", "P:D", "P:F", "P:B", "P:H", "P:J", "P:K", "P:L", "S:27", "S:29",  "=", "S:94", "RES", "f6", NULL},
-    {"P:Z", "P:X", "P:C", "P:V", "P:B", "P:N", "P:M", "<", ">", "?",    "S:4096",   "   ",    "CTL", "f8", NULL},
-    {"R/S", "    SPACE    ",                            "S:4098", "S:4097", "S:4099","SHIFT", "C=",NULL}
+    {"!", "\"","#", "$", "%", "&", "'", "(", ")", "0", "S:91", "S:71", "S:105", "CLR", "f2", NULL},
+    {"P:Q", "P:W", "P:E", "P:R", "P:T", "P:Y", "P:U",  "P:I",  "P:O",  "P:P",  "S:122", "P:C", "S:31", "INS", "f4", NULL},
+    {"P:A", "P:S", "P:D", "P:F", "P:B", "P:H", "P:J",  "P:K",  "P:L",  "S:27", "S:29",  "=",   "S:94", "RES", "f6", NULL},
+    {"P:Z", "P:X", "P:C", "P:V", "P:B", "P:N", "P:M",  "<",    ">",    "?",    "S:4096", "RET",        "CTL", "f8", NULL},
+    {"R/S", "    SPACE    ",                                         "S:4098", "S:4097", "S:4099","SHIFT",     "C=",NULL}
   },
 
   {
-    {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0",    "+",     "-", "S:28", "HOM", "f1", NULL},
-    {"q", "w", "e", "r", "t", "y", "u", "i", "o", "p",    "S:256", "*", "S:31", "DEL", "f3", NULL},
-    {"a", "s", "d", "f", "g", "h", "j", "k", "l", ":",    ";",     "=", "S:30", "RES", "f5", NULL},
-    {"z", "x", "c", "v", "b", "n", "m", ",", ".", "/",    "S:4096",     "   ",    "CTL", "f7", NULL},
-	  {"R/S", "    SPACE    ",                            "S:4098", "S:4097", "S:4099","SHIFT", "C=",NULL}
+    {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "+",      "-", "S:28", "HOM", "f1", NULL},
+    {"q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "S:256",  "*", "S:31", "DEL", "f3", NULL},
+    {"a", "s", "d", "f", "g", "h", "j", "k", "l", ":", ";",      "=", "S:30", "RES", "f5", NULL},
+    {"z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "S:4096", "RET",       "CTL", "f7", NULL},
+    {"R/S", "    SPACE    "      ,           "S:4098", "S:4097", "S:4099","SHIFT", "C=",NULL}
   }, {
     {"!", "\"","#", "$", "%", "&", "'", "(", ")", "0",    "+",     "-", "S:28", "CLR", "f2", NULL},
     {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",    "S:256", "*", "S:31", "INS", "f4", NULL},
     {"A", "S", "D", "F", "G", "H", "J", "K", "L", "S:27", "S:29",  "=", "S:30", "RES", "f6", NULL},
-    {"Z", "X", "C", "V", "B", "N", "M", "<", ">", "?",    "S:4096",   "   ",    "CTL", "f8", NULL},
-    {"R/S", "    SPACE    ",                            "S:4098", "S:4097", "S:4099","SHIFT", "C=",NULL}
+    {"Z", "X", "C", "V", "B", "N", "M", "<", ">", "?",    "S:4096","RET",       "CTL", "f8", NULL},
+    {"R/S", "    SPACE    ",                    "S:4098", "S:4097", "S:4099","SHIFT",   "C=",NULL}
   }
   
 };
