@@ -71,8 +71,8 @@ enum
 /*
   C64 keyboard matrix:
 
-    Bit 7   6   5   4   3   2   1   0
-  0    CUD  F5  F3  F1  F7 CLR RET DEL
+    Bit 7   6   5   4   3   2   1   0  b
+a 0    CUD  F5  F3  F1  F7 CLR RET DEL
   1    SHL  E   S   Z   4   A   W   3
   2     X   T   F   C   6   D   R   5
   3     V   U   H   B   8   G   Y   7
@@ -540,6 +540,7 @@ int C64Display::BitmapXMod(void)
 static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev_matrix, uint8 *joystick)
 {
 	int c64_key = -1;
+	//printf("key = %d\n", (unsigned int) key);
 	/*
 	if (tab_pressed)
 	{
@@ -624,18 +625,19 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 			case SDLK_SEMICOLON: c64_key = MATRIX(6,2); break;
 			case SDLK_SLASH: c64_key = MATRIX(6,7); break;
 
-			  //case SDLK_ESCAPE: c64_key = MATRIX(7,7); break;
+			case SDLK_BREAK: c64_key = MATRIX(7,7); break;
 			case SDLK_RETURN: c64_key = MATRIX(0,1); break;
 			case SDLK_BACKSPACE:c64_key = MATRIX(0,0)|0x80; break;
-		        case SDLK_DELETE: c64_key = MATRIX(0,0); break;
-			case SDLK_INSERT: c64_key = MATRIX(6,3); break;
-			case SDLK_HOME: c64_key = MATRIX(6,3); break;
+			  //case SDLK_DELETE: c64_key = MATRIX(0,0); break;
+			  //case SDLK_INSERT: c64_key = MATRIX(6,3); break;
+		case SDLK_PRINT: c64_key = MATRIX(6,3);  printf("print\n"); break;
+		  //	case SDLK_SYSREQ: c64_key = MATRIX(6,3)|0x80; printf("sysrq\n");break;
 			case SDLK_END: c64_key = MATRIX(6,0); break;
 			case SDLK_PAGEUP: c64_key = MATRIX(6,0); break;
 			case SDLK_PAGEDOWN: c64_key = MATRIX(6,5); break;
 
 			case SDLK_LCTRL: c64_key = MATRIX(7,2); break;
-		        case SDLK_RCTRL: c64_key = MATRIX(7,5); break;
+		        case SDLK_F14: c64_key = MATRIX(7,5); break;
 			case SDLK_LSHIFT: c64_key = MATRIX(1,7); break;
 			case SDLK_RSHIFT: c64_key = MATRIX(6,4); break;
 			  //case SDLK_LALT: case SDLK_LMETA: c64_key = MATRIX(7,5); break;
@@ -716,8 +718,8 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 	{
 		if (shifted) 
 		{
-			key_matrix[6] |= 0x10;
-			rev_matrix[4] |= 0x40;
+		  key_matrix[6] |= 0x10;
+		  rev_matrix[4] |= 0x40;
 		}
 		key_matrix[c64_byte] |= (1 << c64_bit);
 		rev_matrix[c64_bit] |= (1 << c64_byte);
@@ -726,8 +728,8 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 	{
 		if (shifted)
 		{
-			key_matrix[6] &= 0xef;
-			rev_matrix[4] &= 0xbf;
+		  key_matrix[6] &= 0xef;
+		  rev_matrix[4] &= 0xbf;
 		}
 		key_matrix[c64_byte] &= ~(1 << c64_bit);
 		rev_matrix[c64_bit] &= ~(1 << c64_byte);
@@ -814,7 +816,7 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		{
 			case GUI_RETURN_INFO:
 			{
-				fprintf(stderr, "Return code from gui: %d\n", event.user.code);
+			  fprintf(stderr, "Return code from gui: %d\n", event.user.code);
 				switch (event.user.code)
 				{
 					case DO_RESET:
