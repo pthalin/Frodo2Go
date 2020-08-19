@@ -25,7 +25,7 @@
 #include "Display.h"
 #include "Prefs.h"
 //#include "SAM.h"
-
+#include "Version.h"
 
 // Global variables
 C64 *TheC64 = NULL;		// Global C64 object
@@ -37,17 +37,10 @@ char AppDirPath[1024];	// Path of application directory
 #define DATADIR
 #endif
 
-#ifdef __riscos__
-#define BASIC_ROM_FILE	"FrodoRsrc:Basic_ROM"
-#define KERNAL_ROM_FILE	"FrodoRsrc:Kernal_ROM"
-#define CHAR_ROM_FILE	"FrodoRsrc:Char_ROM"
-#define DRIVE_ROM_FILE	"FrodoRsrc:1541_ROM"
-#else
 #define BASIC_ROM_FILE DATADIR "Basic ROM"
 #define KERNAL_ROM_FILE DATADIR "Kernal ROM"
 #define CHAR_ROM_FILE DATADIR "Char ROM"
 #define DRIVE_ROM_FILE DATADIR "1541 ROM"
-#endif
 
 
 // Builtin ROMs
@@ -86,7 +79,124 @@ void Frodo::load_rom_files()
 	load_rom("1541", DRIVE_ROM_FILE, TheC64->ROM1541, DRIVE_ROM_SIZE, builtin_drive_rom);
 }
 
-#ifdef __unix
-#include "main_x.h"
-#endif
+
+extern int init_graphics(void);
+
+
+// Global variables
+Frodo *TheApp = NULL;
+char Frodo::prefs_path[256] = "";
+char Frodo::d8_path[256] = "";
+
+
+/*
+ *  Create application object and start it
+ */
+
+int main(int argc, char **argv)
+{
+	timeval tv;
+	gettimeofday(&tv, NULL);
+	srand(tv.tv_usec);
+	/*
+	printf(
+		"%s Copyright (C) Christian Bauer\n"
+		"This is free software with ABSOLUTELY NO WARRANTY.\n"
+		, VERSION_STRING
+	);
+	*/
+	if (!init_graphics())
+		return 1;
+	fflush(stdout);
+
+	TheApp = new Frodo();
+	TheApp->ArgvReceived(argc, argv);
+	TheApp->ReadyToRun();
+	delete TheApp;
+
+	return 0;
+}
+
+
+/*
+ *  Constructor: Initialize member variables
+ */
+
+Frodo::Frodo()
+{
+	TheC64 = NULL;
+}
+
+
+/*
+ *  Process command line arguments
+ */
+
+void Frodo::ArgvReceived(int argc, char **argv)
+{
+  if (argc == 2)
+    strncpy(d8_path, argv[1], 255);
+  //strncpy(prefs_path, argv[1], 255);
+  //else if ((argc == 3) && !strcmp(argv[1], "-d8"))
+  // strncpy(d8_path, argv[2], 255);
+}
+
+
+/*
+ *  Arguments processed, run emulation
+ */
+
+void Frodo::ReadyToRun()
+{
+	getcwd(AppDirPath, 256);
+
+	// Load preferences
+	if (!prefs_path[0]) {
+		char *home = getenv("HOME");
+		if (home != NULL && strlen(home) < 240) {
+			strncpy(prefs_path, home, 200);
+			strcat(prefs_path, "/");
+		}
+		strcat(prefs_path, ".frodorc");
+	}
+	//ThePrefs.Load(prefs_path);
+	strncpy(ThePrefs.DrivePath[0], d8_path,255);
+
+	if (d8_path[0] == '\0')
+	  printf("ERROR: Path is to long or empty\n");
+	
+	// Create and start C64
+	TheC64 = new C64;
+	load_rom_files();
+	TheC64->Run();
+	delete TheC64;
+}
+
+
+/*
+ *  Run preferences editor
+ */
+
+bool Frodo::RunPrefsEditor(void)
+{
+	Prefs *prefs = new Prefs(ThePrefs);
+	bool result = prefs->ShowEditor(false, prefs_path);
+	if (result) {
+		TheC64->NewPrefs(prefs);
+		ThePrefs = *prefs;
+	}
+	delete prefs;
+	return result;
+}
+
+
+/*
+ *  Determine whether path name refers to a directory
+ */
+
+bool IsDirectory(const char *path)
+{
+	struct stat st;
+	return stat(path, &st) == 0 && S_ISDIR(st.st_mode);
+}
 

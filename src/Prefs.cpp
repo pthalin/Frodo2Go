@@ -355,23 +355,8 @@ bool Prefs::Save(const char *filename)
 	return false;
 }
 
-
-#ifdef __BEOS__
-#include "Prefs_Be.h"
-#endif
-
-#ifdef AMIGA
-#include "Prefs_Amiga.h"
-#endif
-
-#ifdef WIN32
-#include "Prefs_WIN32.h"
-#endif
-
-#ifdef __unix
-#ifdef HAVE_GLADE
-#include "Prefs_glade.h"
-#else
-#include "Prefs_x.h"
-#endif
-#endif
+bool Prefs::ShowEditor(bool startup, char *prefs_name)
+{
+    // No prefs editor implemented
+	return startup;
+}
