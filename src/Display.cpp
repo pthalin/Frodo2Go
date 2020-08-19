@@ -683,10 +683,10 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
     switch (key)
       {
 	
-	// case SDLK_LCTRL: c64_key = 0x10 | 0x40; break; //A fire
-	//case SDLK_SPACE: c64_key = 0x01 | 0x40; break; //B up
-      case SDLK_LSHIFT: c64_key = 0x01 | 0x40; break; //TA up
-      case SDLK_SPACE: c64_key = 0x10 | 0x40; break; //B fire
+      case SDLK_LCTRL: c64_key = 0x10 | 0x40; break; //A fire
+      case SDLK_SPACE: c64_key = 0x01 | 0x40; break; //B up
+	//case SDLK_LSHIFT: c64_key = 0x01 | 0x40; break; //TA up
+	//case SDLK_SPACE: c64_key = 0x10 | 0x40; break; //B fire
 	
       case SDLK_UP:    c64_key = 0x01 | 0x40; break;
       case SDLK_DOWN:  c64_key = 0x02 | 0x40; break;
@@ -865,13 +865,13 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		    case SDLK_RETURN: // START
 		      //if (!(event.key.keysym.mod & KMOD_SYNTHETIC)) {
 		      {
-			keyboard_enable = !keyboard_enable;
-			//if (keyboard_enable && keyboard_pos)
-			//  keyboard_pos = false;
-			//else {
-			//  keyboard_enable = !keyboard_enable;
-			// keyboard_pos = true;
-			//}
+			//keyboard_enable = !keyboard_enable;
+			if (keyboard_enable && keyboard_pos)
+			  keyboard_pos = false;
+			else {
+			 keyboard_enable = !keyboard_enable;
+			 keyboard_pos = true;
+			}
 	       	
 		      }
 		      break;
