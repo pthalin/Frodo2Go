@@ -621,157 +621,163 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 		}
 	}
 	else*/
-	{
-		switch (key)
-		{
-			case SDLK_a: c64_key = MATRIX(1,2); break;
-			case SDLK_b: c64_key = MATRIX(3,4); break;
-			case SDLK_c: c64_key = MATRIX(2,4); break;
-			case SDLK_d: c64_key = MATRIX(2,2); break;
-			case SDLK_e: c64_key = MATRIX(1,6); break;
-			case SDLK_f: c64_key = MATRIX(2,5); break;
-			case SDLK_g: c64_key = MATRIX(3,2); break;
-			case SDLK_h: c64_key = MATRIX(3,5); break;
-			case SDLK_i: c64_key = MATRIX(4,1); break;
-			case SDLK_j: c64_key = MATRIX(4,2); break;
-			case SDLK_k: c64_key = MATRIX(4,5); break;
-			case SDLK_l: c64_key = MATRIX(5,2); break;
-			case SDLK_m: c64_key = MATRIX(4,4); break;
-			case SDLK_n: c64_key = MATRIX(4,7); break;
-			case SDLK_o: c64_key = MATRIX(4,6); break;
-			case SDLK_p: c64_key = MATRIX(5,1); break;
-			case SDLK_q: c64_key = MATRIX(7,6); break;
-			case SDLK_r: c64_key = MATRIX(2,1); break;
-			case SDLK_s: c64_key = MATRIX(1,5); break;
-			case SDLK_t: c64_key = MATRIX(2,6); break;
-			case SDLK_u: c64_key = MATRIX(3,6); break;
-			case SDLK_v: c64_key = MATRIX(3,7); break;
-			case SDLK_w: c64_key = MATRIX(1,1); break;
-			case SDLK_x: c64_key = MATRIX(2,7); break;
-			case SDLK_y: c64_key = MATRIX(3,1); break;
-			case SDLK_z: c64_key = MATRIX(1,4); break;
+	
+	if (keyboard_enable) {
+	  switch (key)
+	    {
+	    case SDLK_a: c64_key = MATRIX(1,2); break;
+	    case SDLK_b: c64_key = MATRIX(3,4); break;
+	    case SDLK_c: c64_key = MATRIX(2,4); break;
+	    case SDLK_d: c64_key = MATRIX(2,2); break;
+	    case SDLK_e: c64_key = MATRIX(1,6); break;
+	    case SDLK_f: c64_key = MATRIX(2,5); break;
+	    case SDLK_g: c64_key = MATRIX(3,2); break;
+	    case SDLK_h: c64_key = MATRIX(3,5); break;
+	    case SDLK_i: c64_key = MATRIX(4,1); break;
+	    case SDLK_j: c64_key = MATRIX(4,2); break;
+	    case SDLK_k: c64_key = MATRIX(4,5); break;
+	    case SDLK_l: c64_key = MATRIX(5,2); break;
+	    case SDLK_m: c64_key = MATRIX(4,4); break;
+	    case SDLK_n: c64_key = MATRIX(4,7); break;
+	    case SDLK_o: c64_key = MATRIX(4,6); break;
+	    case SDLK_p: c64_key = MATRIX(5,1); break;
+	    case SDLK_q: c64_key = MATRIX(7,6); break;
+	    case SDLK_r: c64_key = MATRIX(2,1); break;
+	    case SDLK_s: c64_key = MATRIX(1,5); break;
+	    case SDLK_t: c64_key = MATRIX(2,6); break;
+	    case SDLK_u: c64_key = MATRIX(3,6); break;
+	    case SDLK_v: c64_key = MATRIX(3,7); break;
+	    case SDLK_w: c64_key = MATRIX(1,1); break;
+	    case SDLK_x: c64_key = MATRIX(2,7); break;
+	    case SDLK_y: c64_key = MATRIX(3,1); break;
+	    case SDLK_z: c64_key = MATRIX(1,4); break;
+	      
+	      
+	    case SDLK_1: c64_key = MATRIX(7,0); break;
+	    case SDLK_2: c64_key = MATRIX(7,3); break;
+	    case SDLK_3: c64_key = MATRIX(1,0); break;
+	    case SDLK_4: c64_key = MATRIX(1,3); break;
+	    case SDLK_5: c64_key = MATRIX(2,0); break;
+	    case SDLK_6: c64_key = MATRIX(2,3); break;
+	    case SDLK_7: c64_key = MATRIX(3,0); break;
+	    case SDLK_8: c64_key = MATRIX(3,3); break;
+	    case SDLK_9: c64_key = MATRIX(4,0); break;
+	    case SDLK_0: c64_key = MATRIX(4,3); break;
+	      
+	    case SDLK_EXCLAIM: c64_key = MATRIX(7,0) |0x80; break;
+	    case SDLK_QUOTEDBL: c64_key = MATRIX(7,3) | 0x80; break;
+	    case SDLK_HASH: c64_key = MATRIX(1,0)|0x80; break;
+	    case SDLK_DOLLAR: c64_key = MATRIX(1,3)|0x80; break;
+	    case SDLK_F15: c64_key = MATRIX(2,0)|0x80; break; //%
+	    case SDLK_AMPERSAND: c64_key = MATRIX(2,3); break;
+	    case SDLK_QUOTE: c64_key = MATRIX(3,0); break;
+	    case SDLK_LEFTPAREN: c64_key = MATRIX(3,3); break;
+	    case SDLK_RIGHTPAREN: c64_key = MATRIX(4,0); break;
+	      
+	      
+	    case SDLK_SPACE: c64_key = MATRIX(7,4); break;
+	    case SDLK_BACKQUOTE: c64_key = MATRIX(7,1); break;
+	    case SDLK_BACKSLASH: c64_key = MATRIX(6,6); break;
+	    case SDLK_COMMA: c64_key = MATRIX(5,7); break;
+	    case SDLK_PERIOD: c64_key = MATRIX(5,4); break;
+	    case SDLK_MINUS: c64_key = MATRIX(5,3); break;
+	    case SDLK_PLUS: c64_key = MATRIX(5,0); break;
+	    case SDLK_EQUALS: c64_key = MATRIX(6,5); break;
+	    case SDLK_LEFTBRACKET: c64_key = MATRIX(5,6); break;
+	    case SDLK_RIGHTBRACKET: c64_key = MATRIX(6,1); break;
+	    case SDLK_SEMICOLON: c64_key = MATRIX(6,2); break;
+	    case SDLK_SLASH: c64_key = MATRIX(6,7); break;
+	      
+	    case SDLK_BREAK: c64_key = MATRIX(7,7); break;
+	    case SDLK_RETURN: c64_key = MATRIX(0,1); break;
+	    case SDLK_BACKSPACE:c64_key = MATRIX(0,0); break;
+	      //case SDLK_DELETE: c64_key = MATRIX(0,0); break;
+	      //case SDLK_INSERT: c64_key = MATRIX(6,3); break;
+	    case SDLK_PRINT: c64_key = MATRIX(6,3);  break;
+	      //	case SDLK_SYSREQ: c64_key = MATRIX(6,3)|0x80; printf("sysrq\n");break;
+	    case SDLK_END: c64_key = MATRIX(6,0); break;
+	    case SDLK_PAGEUP: c64_key = MATRIX(6,0); break;
+	    case SDLK_PAGEDOWN: c64_key = MATRIX(6,5); break;
+	      
+	      //case SDLK_LCTRL: c64_key = MATRIX(7,2); break;
+	    case SDLK_F14: c64_key = MATRIX(7,5); break;
+	    case SDLK_LSHIFT: c64_key = MATRIX(1,7); break;
+	    case SDLK_RSHIFT: c64_key = MATRIX(6,4); break;
+	      //case SDLK_LALT: case SDLK_LMETA: c64_key = MATRIX(7,5); break;
+	    case SDLK_RALT: case SDLK_RMETA: c64_key = MATRIX(7,5); break;
+	      
+	    case SDLK_UP: c64_key = MATRIX(0,7)| 0x80; break;
+	    case SDLK_DOWN: c64_key = MATRIX(0,7); break;
+	    case SDLK_LEFT: c64_key = MATRIX(0,2) | 0x80; break;
+	    case SDLK_RIGHT: c64_key = MATRIX(0,2); break;
+	      
+	    case SDLK_F1: c64_key = MATRIX(0,4); break;
+	    case SDLK_F2: c64_key = MATRIX(0,4) | 0x80; break;
+	    case SDLK_F3: c64_key = MATRIX(0,5); break;
+	    case SDLK_F4: c64_key = MATRIX(0,5) | 0x80; break;
+	    case SDLK_F5: c64_key = MATRIX(0,6); break;
+	    case SDLK_F6: c64_key = MATRIX(0,6) | 0x80; break;
+	    case SDLK_F7: c64_key = MATRIX(0,3); break;
+	    case SDLK_F8: c64_key = MATRIX(0,3) | 0x80; break;
+	      
+	    case SDLK_KP0: case SDLK_KP5: c64_key = 0x10 | 0x40; break;
+	    case SDLK_KP1: c64_key = 0x06 | 0x40; break;
+	    case SDLK_KP2: c64_key = 0x02 | 0x40; break;
+	    case SDLK_KP3: c64_key = 0x0a | 0x40; break;
+	    case SDLK_KP4: c64_key = 0x04 | 0x40; break;
+	    case SDLK_KP6: c64_key = 0x08 | 0x40; break;
+	    case SDLK_KP7: c64_key = 0x05 | 0x40; break;
+	    case SDLK_KP8: c64_key = 0x01 | 0x40; break;
+	    case SDLK_KP9: c64_key = 0x09 | 0x40; break;
+	      
+	    case SDLK_KP_DIVIDE: c64_key = MATRIX(6,7); break;
+	    case SDLK_KP_ENTER: c64_key = MATRIX(0,1); break;
+	      
+	      // Support for Zaurus/Qtopia
+	      
+	    case SDLK_ASTERISK: c64_key = MATRIX(6,1); break;
+	    case SDLK_COLON: c64_key = MATRIX(5,5); break;
+	    case SDLK_AT: c64_key = MATRIX(5,6); break;
+	    }
 
-
-			case SDLK_1: c64_key = MATRIX(7,0); break;
-			case SDLK_2: c64_key = MATRIX(7,3); break;
-			case SDLK_3: c64_key = MATRIX(1,0); break;
-			case SDLK_4: c64_key = MATRIX(1,3); break;
-			case SDLK_5: c64_key = MATRIX(2,0); break;
-			case SDLK_6: c64_key = MATRIX(2,3); break;
-			case SDLK_7: c64_key = MATRIX(3,0); break;
-			case SDLK_8: c64_key = MATRIX(3,3); break;
-			case SDLK_9: c64_key = MATRIX(4,0); break;
-			case SDLK_0: c64_key = MATRIX(4,3); break;
-			  
-  		        case SDLK_EXCLAIM: c64_key = MATRIX(7,0) |0x80; break;
-         	        case SDLK_QUOTEDBL: c64_key = MATRIX(7,3) | 0x80; break;
-              		case SDLK_HASH: c64_key = MATRIX(1,0)|0x80; break;
-  			case SDLK_DOLLAR: c64_key = MATRIX(1,3)|0x80; break;
-        		case SDLK_F15: c64_key = MATRIX(2,0)|0x80; break; //%
-			case SDLK_AMPERSAND: c64_key = MATRIX(2,3); break;
-			case SDLK_QUOTE: c64_key = MATRIX(3,0); break;
-			case SDLK_LEFTPAREN: c64_key = MATRIX(3,3); break;
-			case SDLK_RIGHTPAREN: c64_key = MATRIX(4,0); break;
-
-			  
-			case SDLK_SPACE: c64_key = MATRIX(7,4); break;
-			case SDLK_BACKQUOTE: c64_key = MATRIX(7,1); break;
-			case SDLK_BACKSLASH: c64_key = MATRIX(6,6); break;
-			case SDLK_COMMA: c64_key = MATRIX(5,7); break;
-			case SDLK_PERIOD: c64_key = MATRIX(5,4); break;
-			case SDLK_MINUS: c64_key = MATRIX(5,3); break;
-	        	case SDLK_PLUS: c64_key = MATRIX(5,0); break;
-			case SDLK_EQUALS: c64_key = MATRIX(6,5); break;
-			case SDLK_LEFTBRACKET: c64_key = MATRIX(5,6); break;
-			case SDLK_RIGHTBRACKET: c64_key = MATRIX(6,1); break;
-			case SDLK_SEMICOLON: c64_key = MATRIX(6,2); break;
-			case SDLK_SLASH: c64_key = MATRIX(6,7); break;
-
-			case SDLK_BREAK: c64_key = MATRIX(7,7); break;
-			case SDLK_RETURN: c64_key = MATRIX(0,1); break;
-			case SDLK_BACKSPACE:c64_key = MATRIX(0,0); break;
-			  //case SDLK_DELETE: c64_key = MATRIX(0,0); break;
-			  //case SDLK_INSERT: c64_key = MATRIX(6,3); break;
-		        case SDLK_PRINT: c64_key = MATRIX(6,3);  break;
-		  //	case SDLK_SYSREQ: c64_key = MATRIX(6,3)|0x80; printf("sysrq\n");break;
-			case SDLK_END: c64_key = MATRIX(6,0); break;
-			case SDLK_PAGEUP: c64_key = MATRIX(6,0); break;
-			case SDLK_PAGEDOWN: c64_key = MATRIX(6,5); break;
-
-			case SDLK_LCTRL: c64_key = MATRIX(7,2); break;
-		        case SDLK_F14: c64_key = MATRIX(7,5); break;
-			case SDLK_LSHIFT: c64_key = MATRIX(1,7); break;
-			case SDLK_RSHIFT: c64_key = MATRIX(6,4); break;
-			  //case SDLK_LALT: case SDLK_LMETA: c64_key = MATRIX(7,5); break;
-			case SDLK_RALT: case SDLK_RMETA: c64_key = MATRIX(7,5); break;
-
-			case SDLK_UP: c64_key = MATRIX(0,7)| 0x80; break;
-			case SDLK_DOWN: c64_key = MATRIX(0,7); break;
-			case SDLK_LEFT: c64_key = MATRIX(0,2) | 0x80; break;
-			case SDLK_RIGHT: c64_key = MATRIX(0,2); break;
-
-			case SDLK_F1: c64_key = MATRIX(0,4); break;
-			case SDLK_F2: c64_key = MATRIX(0,4) | 0x80; break;
-			case SDLK_F3: c64_key = MATRIX(0,5); break;
-			case SDLK_F4: c64_key = MATRIX(0,5) | 0x80; break;
-			case SDLK_F5: c64_key = MATRIX(0,6); break;
-			case SDLK_F6: c64_key = MATRIX(0,6) | 0x80; break;
-			case SDLK_F7: c64_key = MATRIX(0,3); break;
-			case SDLK_F8: c64_key = MATRIX(0,3) | 0x80; break;
-
-			case SDLK_KP0: case SDLK_KP5: c64_key = 0x10 | 0x40; break;
-			case SDLK_KP1: c64_key = 0x06 | 0x40; break;
-			case SDLK_KP2: c64_key = 0x02 | 0x40; break;
-			case SDLK_KP3: c64_key = 0x0a | 0x40; break;
-			case SDLK_KP4: c64_key = 0x04 | 0x40; break;
-			case SDLK_KP6: c64_key = 0x08 | 0x40; break;
-			case SDLK_KP7: c64_key = 0x05 | 0x40; break;
-			case SDLK_KP8: c64_key = 0x01 | 0x40; break;
-			case SDLK_KP9: c64_key = 0x09 | 0x40; break;
-
-			case SDLK_KP_DIVIDE: c64_key = MATRIX(6,7); break;
-			case SDLK_KP_ENTER: c64_key = MATRIX(0,1); break;
-
-			// Support for Zaurus/Qtopia
-
-			case SDLK_ASTERISK: c64_key = MATRIX(6,1); break;
-			case SDLK_COLON: c64_key = MATRIX(5,5); break;
-			case SDLK_AT: c64_key = MATRIX(5,6); break;
-		}
+	  if (c64_key < 0) {
+	    //printf("Invalid key\n");
+	    return;
+	  }
 	}
-	if (c64_key < 0)
-		return;
 
 	// Zaurus/Qtopia joystick emulation
 	//if (joy_emu != 0)
 	//{
-	if (!keyboard_enable) {
-		switch (key)
-		  {
-  // case SDLK_LCTRL: c64_key = 0x10 | 0x40; break; //A fire
-		    //case SDLK_SPACE: c64_key = 0x01 | 0x40; break; //B up
-		       case SDLK_LSHIFT: c64_key = 0x01 | 0x40; break; //TA up
-		       case SDLK_SPACE: c64_key = 0x10 | 0x40; break; //B fire
-		
+	if (keyboard_enable == false) {
+	  //printf("J Key=%d\n", key);
+	  switch (key)
+	    {
+	      
+	      // case SDLK_LCTRL: c64_key = 0x10 | 0x40; break; //A fire
+	      //case SDLK_SPACE: c64_key = 0x01 | 0x40; break; //B up
+	    case SDLK_LSHIFT: c64_key = 0x01 | 0x40; break; //TA up
+	    case SDLK_SPACE: c64_key = 0x10 | 0x40; break; //B fire
+	      
 		        case SDLK_UP:    c64_key = 0x01 | 0x40; break;
-			case SDLK_DOWN:  c64_key = 0x02 | 0x40; break;
-			case SDLK_LEFT:  c64_key = 0x04 | 0x40; break;
+	    case SDLK_DOWN:  c64_key = 0x02 | 0x40; break;
+	    case SDLK_LEFT:  c64_key = 0x04 | 0x40; break;
 			case SDLK_RIGHT: c64_key = 0x08 | 0x40; break;
-		}
-	}
+	    }
+	
 		//}
-
+	  
 	// Handle joystick emulation
-	if (c64_key & 0x40) 
-	{
-		c64_key &= 0x1f;
-		if (key_up)
-			*joystick |= c64_key;
-		else
-			*joystick &= ~c64_key;
-		return;
+	  if (c64_key & 0x40) 
+	    {
+	      c64_key &= 0x1f;
+	      if (key_up)
+		*joystick |= c64_key;
+	      else
+		*joystick &= ~c64_key;
+	      return;
+	    }
 	}
-
 	// Handle other keys
 	bool shifted = c64_key & 0x80;
 	int c64_byte = (c64_key >> 3) & 7;
@@ -821,7 +827,9 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 	
 	if((cmd_pos < sizeof(cmd_buffer)) && (start_delay == 0))
 	  {
+	    keyboard_enable = true;
 	    translate_key((SDLKey)cmd_buffer[cmd_pos], cmd_key_up, key_matrix, rev_matrix, joystick);
+	    keyboard_enable = false;
 	    if (cmd_key_up)
 	      {
 		cmd_key_up = false;
@@ -940,13 +948,15 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 							quit_requested = true;
 							break;
 					case SDLK_RETURN: // START
-					  if (!(event.key.keysym.mod & KMOD_SYNTHETIC)) {
-					    if (keyboard_enable && keyboard_pos)
-					      keyboard_pos = false;
-					    else {
-					      keyboard_enable = !keyboard_enable;
-					      keyboard_pos = true;
-					    }
+					  //if (!(event.key.keysym.mod & KMOD_SYNTHETIC)) {
+					  {
+					    keyboard_enable = !keyboard_enable;
+					    //if (keyboard_enable && keyboard_pos)
+					    //  keyboard_pos = false;
+					    //else {
+					    //  keyboard_enable = !keyboard_enable;
+					    // keyboard_pos = true;
+					    //}
 					    
 					  }
 					  break;
@@ -970,7 +980,8 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 							break;
 							*/
 						default:
-						  if (event.key.keysym.mod & KMOD_SYNTHETIC) {
+						  if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
+						    //{
 						    translate_key(event.key.keysym.sym, false, key_matrix, rev_matrix, joystick);
 						    return;
 						  }
@@ -985,7 +996,8 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 					tab_pressed = false;
 				else
 				  
-				    if (event.key.keysym.mod & KMOD_SYNTHETIC) {
+				  if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
+				    //{
 				      translate_key(event.key.keysym.sym, true, key_matrix, rev_matrix, joystick);
 				      return;
 				    }
