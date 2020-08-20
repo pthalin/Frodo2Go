@@ -91,5 +91,39 @@ void draw_string(SDL_Surface* surface, const char* text, int orig_x, int orig_y,
     text++;
   }
 }
+void draw_char_osd(SDL_Surface* surface, unsigned char symbol, int x, int y, unsigned short color) {
+  x += (8 - 1) * 1;
+  int flip = 0;
+  unsigned int s;
+  int move_up = 0;
+  if(symbol >= 97) {
+    s=symbol-96+(2*8*16); //lowe case
+  } else {
+    s=symbol+(16*16); //UPPER CASE
+  }
+  
+  const unsigned char* ptr = builtin_char_rom + s * 8;
+  
+  for(int i = 0, ys = 0; i < 8; i++, ptr++, ys += 1) //ROW 
+    for(int col = 0, xs = x - col -1; col < 8; col++, xs -= 1)
+      if((*ptr & 1 << col) && y + ys < surface->h && xs < surface->w ) {
+	((unsigned short*)surface->pixels)[(y-1 - move_up + flip * 4 + (1 - 2 * flip) * ys) * (surface->pitch >> 1) + xs] = color;
+      }
+}
+
+void draw_string_osd(SDL_Surface* surface, const char* text, int orig_x, int orig_y, unsigned short color) {
+  int x = orig_x, y = orig_y;
+  while(*text) {
+    if(*text == '\n') {
+      x = orig_x;
+      y += 8;
+    } else {
+      draw_char_osd(surface, *text, x, y, color);
+      x += 7;
+    }
+    text++;
+  }
+  
+}
 
 

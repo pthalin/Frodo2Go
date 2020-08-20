@@ -1,0 +1,36 @@
+# includes and libs
+INCS = -I. 
+LIBS = -lc -lutil
+
+# flags
+CPPFLAGS = -DTEST_KEYBOARD
+CFLAGS  += -m32 -g -Wall ${INCS} ${CPPFLAGS}
+LDFLAGS += -m32 -g ${LIBS} -lSDL 
+
+# compiler and linker
+CC ?= cc
+CXX = g++
+
+SRC = menu_main.c font.c 
+OBJ = ${SRC:.c=.o}
+all: options menu
+
+options:
+	@echo menu build options:
+	@echo "CFLAGS   = ${CFLAGS}"
+	@echo "LDFLAGS  = ${LDFLAGS}"
+	@echo "CXX       = ${CXX}"
+
+.c.o:
+	@echo CXX $<
+	@${CXX} -c ${CFLAGS} $<
+
+
+
+menu: 	${OBJ}
+	@echo CXX -o $@
+	@${CXX} -o $@ ${OBJ} ${LDFLAGS}
+
+clean:
+	@echo cleaning
+	@rm -f kbd ${OBJ} 
