@@ -773,9 +773,12 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
   SDL_PumpEvents();
   while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, eventmask))
     {
-      handle_keyboard_event(&event);
-      SDL_PumpEvents();
-	    
+      
+      if (keyboard_enable) {
+	handle_keyboard_event(&event);
+	SDL_PumpEvents();
+      }
+      
       if (GUIOpened) 
 	{
 	  if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) 
