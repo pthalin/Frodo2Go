@@ -24,7 +24,7 @@ SYSROOT     := $(shell $(CC) --print-sysroot)
 LIBS   = $(shell $(SYSROOT)/usr/bin/sdl-config --cflags)
 LDFLAGS= $(shell $(SYSROOT)/usr/bin/sdl-config --static-libs) 
 
-CFLAGS = -g -O2 -fomit-frame-pointer -fno-exceptions  -I./ -DKBD_LANG=0 -DHAVE_SDL -Wno-narrowing -DMAEMO -DDEBUG
+CFLAGS = -O2 -fomit-frame-pointer -fno-exceptions  -I./ -DKBD_LANG=0 -DHAVE_SDL -Wno-narrowing -DMAEMO -DDEBUG
 DEFS = -DHAVE_CONFIG_H -DDATADIR=\"$(datadir)/frodo/\" -DBINDIR=\"$(bindir)/\"
 INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = ${INSTALL}
