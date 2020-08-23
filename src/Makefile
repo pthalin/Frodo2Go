@@ -12,8 +12,6 @@ datadir = ${datarootdir}
 
 DESTDIR =
 
-
-
 CC = gcc
 CXX = g++
 
@@ -23,9 +21,8 @@ SYSROOT     := $(shell $(CC) --print-sysroot)
 LIBS   = -lm $(shell /usr/bin/sdl-config --cflags)
 LDFLAGS= -m32 $(shell /usr/bin/sdl-config --static-libs) 
 
-CFLAGS = -m32 -g  -I./ -DKBD_LANG=0 -DHAVE_SDL -DMAEMO -Wno-narrowing -DDEBUG
+CFLAGS = -m32 -g  -I./ -DKBD_LANG=0 -DHAVE_SDL -DMAEMO -Wno-narrowing
 
-#-DMAEMO
 
 DEFS = -DHAVE_CONFIG_H -DDATADIR=\"$(datadir)/frodo/\" -DBINDIR=\"$(bindir)/\"
 
@@ -34,14 +31,14 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_DATA = ${INSTALL} -m 644
 
 ## Files
-GUIOBJS = font.o keyboard.o sdlgui.o file.o dlgFileSelect.o dlgMain.o dlgDrives.o dlgOptions.o dlgVideoSound.o dlgAdvanced.o dlgInput.o
+GUIOBJS = font.o keyboard.o
 OBJS    = $(GUIOBJS) main.o Display.o Prefs.o SID.o REU.o IEC.o 1541fs.o \
           1541d64.o 1541t64.o 1541job.o CmdPipe.o
 SLOBJS  = $(OBJS) C64.o CPUC64.o VIC.o CIA.o CPU1541.o
 SLFLAGS = -DPRECISE_CPU_CYCLES=1 -DPRECISE_CIA_CYCLES=1 -DPC_IS_POINTER=0
 SCOBJS  = $(OBJS) C64_SC.o CPUC64_SC.o VIC_SC.o CIA_SC.o CPU1541_SC.o CPU_common.o
 SCFLAGS = -DFRODO_SC
-GUISRCS = font.c keyboard.c sdlgui.cpp file.cpp dlgFileSelect.cpp dlgMain.cpp dlgDrives.cpp dlgOptions.cpp dlgVidoSound.cpp dlgAdvanced.cpp dlgInput.cpp
+GUISRCS = font.c keyboard.c
 SRCS    = $(GUISRCS) main.cpp Display.cpp Prefs.cpp SID.cpp REU.cpp IEC.cpp 1541fs.cpp \
           1541d64.cpp 1541t64.cpp 1541job.cpp CmdPipe.cpp C64.cpp \
           C64_SC.cpp CPUC64.cpp CPUC64_SC.cpp VIC.cpp VIC_SC.cpp CIA.cpp \

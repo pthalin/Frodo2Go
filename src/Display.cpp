@@ -31,7 +31,7 @@
 #include "Version.h"
 
 #include "sdlgui.h"
-#include "dlgMain.h"
+//#include "dlgMain.h"
 
 #define QWS
 #include <SDL/SDL.h>
@@ -240,6 +240,7 @@ void saveBackground()
 
 void blendBackgrounds()
 {
+  /*
   if (backgroundSurf != NULL) 
     {
       SDL_Rect *Rect;
@@ -251,6 +252,7 @@ void blendBackgrounds()
 	}
       update(true);
     }
+  */
 }
 
 static Prefs DialogPrefs; 
@@ -258,10 +260,11 @@ static Prefs DialogPrefs;
 // running in a different thread
 static int open_gui(void * /*ptr*/)
 {
+  /*
   openGUI();
   DialogPrefs = ThePrefs;
   // Show main dialog
-  int status = Dialog_Main(DialogPrefs);
+   int status = Dialog_Main(DialogPrefs);
   // The status is sent to event checking thread by the USEREVENT+1 message
   SDL_Event ev;
   ev.type = GUI_RETURN_INFO;
@@ -269,6 +272,7 @@ static int open_gui(void * /*ptr*/)
   ev.user.data1 = NULL;
   SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(GUI_RETURN_INFO));
   closeGUI();
+  */
   return 0;
 }
 
@@ -329,7 +333,7 @@ int init_graphics(void)
   else
     {
       fprintf(stderr, "SDL Set video mode to %d x %d\n", width, height);
-      SDLGui_Init(screen);
+      //SDLGui_Init(screen);
       //start_GUI_thread();
     }
   return 1;
@@ -813,7 +817,7 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
       else
 	{
 	  switch (event.type)
-	    {
+	    {/*
 	    case GUI_RETURN_INFO:
 	      {
 		fprintf(stderr, "Return code from gui: %d\n", event.user.code);
@@ -837,6 +841,7 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		  }
 		break;
 	      }
+	     */
 	      //case SDL_MOUSEBUTTONDOWN:
 	      //case SDL_MOUSEBUTTONUP:
 	      //start_GUI_thread();
