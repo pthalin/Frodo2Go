@@ -11,7 +11,7 @@ LDFLAGS += -m32 -g ${LIBS} -lSDL
 CC ?= cc
 CXX = g++
 
-SRC = menu_main.c font.c 
+SRC = menu_main.c menu_file.c font.c 
 OBJ = ${SRC:.c=.o}
 all: options menu
 
