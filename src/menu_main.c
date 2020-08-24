@@ -67,8 +67,11 @@ int display_menu(SDL_Surface* surface, const char *menu_name, int *selected) {
   
   if (k == menu_size)
     return -1; //Not found
-      
-  *selected = *selected % menu_len[menu_id]; //Wrap and retrun new value
+
+  while(*selected < 0)
+    *selected = *selected + menu_len[menu_id]; //Wrap up if ative
+  
+  *selected = *selected % menu_len[menu_id]; //Wrap overflow 
   int x = 20;
   int j = 0;
   while (menu_items[k+j]) {
@@ -91,14 +94,16 @@ int menu_function(int selected) {
   case EXIT:
     printf("Exit\n");
     break;
-
+  case DRIVES:
+    printf("Drives\n");
   }
 }
   
 
 
 int main() {
-
+  long keysym;
+  SDL_Event event;
   char myfile[256];
   SDL_Init( SDL_INIT_EVERYTHING );
   init_menu(); 
@@ -107,37 +112,56 @@ int main() {
   SDL_Surface* buffer = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
 
 
-  menu_file_request(screen, myfile, ".");
-  printf("File: %s\n", myfile);
+  //menu_file_request(screen, myfile, ".");
+  //printf("File: %s\n", myfile);
   SDL_LockSurface(buffer);
 
   int selected = 0;
+  while(1) {
+    int key_press = 0;
+    while(key_press == 0) {
+      while(SDL_PollEvent(&event)) {
+	switch(event.type) {
+	case SDL_KEYDOWN:
+	  keysym = event.key.keysym.sym;
+	  key_press = 1;
+	  break;
+	  
+	case SDL_QUIT: 
+	  printf("Quit requested, quitting.\n");
+	  exit(0);
+	  break;
+	}
+      }
+    }
+    if(keysym == SDLK_UP){
+      selected--;
+    } else if(keysym == SDLK_DOWN){
+      selected++;
+    }
+    
+    int id = display_menu(buffer, "Main", &selected);
+    //if (display_menu(buffer, "Drives", &selected) < 0) printf("Error: Requested menu not found\n");
+    if(keysym == SDLK_SPACE){
+      menu_function(id+selected+1);
+    }
+    printf("Selected=%d\n", selected);
+    printf("id=%d\n", id);
 
-  for(int k=0; k<3; k++) {
-  //  display_menu(buffer, "Main", &selected);
-  if (display_menu(buffer, "Drives", &selected) < 0) printf("Error: Requested menu not found\n");
-  menu_function(selected);
-  printf("Selected=%d\n", selected);
-
-  selected++;
-
-  for(int j = 0; j < buffer->h; j++) {
-    for(int i = 0; i < buffer->w; i++) {
-      SDL_Rect rect;
-      rect.x = i;
-      rect.y = j;
+    for(int j = 0; j < buffer->h; j++) {
+      for(int i = 0; i < buffer->w; i++) {
+	SDL_Rect rect;
+	rect.x = i;
+	rect.y = j;
       rect.w = 1;
       rect.h = 1;
       SDL_FillRect(screen, &rect, ((unsigned short*)buffer->pixels)[j * (buffer->pitch >> 1) + i]);
+      }
     }
+    SDL_UnlockSurface(buffer);
+    SDL_Flip(screen);
+    SDL_Delay(500);
   }
-  SDL_UnlockSurface(buffer);
-  SDL_Flip(screen);
-  SDL_Delay(500);
-  }
-  //SDL_Delay(5000);
-  
-
   
 
 }
