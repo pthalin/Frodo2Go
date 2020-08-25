@@ -11,8 +11,8 @@ char const  *menu_items[] =
   };
 
 enum menu_action_t {
-  M_MAIN,   DRIVES,  RESET,   EXIT,
-  M_DRIVES, DRIVE8,  DRIVE9,  DRIVE10,  DRIVE11,
+  M_MAIN,   DRIVES,  RESET,   EXIT, N_MAIN,
+  M_DRIVES, DRIVE8,  DRIVE9,  DRIVE10,  DRIVE11, N_DRIVES, 
   N_ACTIONS
 };
 
@@ -36,7 +36,7 @@ void init_menu() {
 	while (menu_items[k+cnt]) {
 	  cnt++;
 	}
-	//printf("N=%d\n", cnt);
+	printf("N=%d\n", cnt);
 	menu_len[i++] = cnt-1; //Exclude NULL
       }
   }
@@ -84,15 +84,16 @@ int display_menu(SDL_Surface* surface, const char *menu_name, int *selected) {
     x+=10;
     j++;
   }
-  return menu_id;
+  return menu_id + *selected + 1;
 }
 
 
-int menu_function(int selected) {
+int menu_function(int action) {
 
-  switch(selected){
+  switch(action){
   case EXIT:
     printf("Exit\n");
+    exit(0);
     break;
   case DRIVES:
     printf("Drives\n");
@@ -117,36 +118,40 @@ int main() {
   SDL_LockSurface(buffer);
 
   int selected = 0;
+  int first_run = 1;
   while(1) {
     int key_press = 0;
-    while(key_press == 0) {
-      while(SDL_PollEvent(&event)) {
-	switch(event.type) {
-	case SDL_KEYDOWN:
-	  keysym = event.key.keysym.sym;
-	  key_press = 1;
-	  break;
-	  
-	case SDL_QUIT: 
-	  printf("Quit requested, quitting.\n");
-	  exit(0);
-	  break;
+    if (first_run) {
+      first_run = 0;
+    } else {
+      while(key_press == 0) {
+	while(SDL_PollEvent(&event)) {
+	  switch(event.type) {
+	  case SDL_KEYDOWN:
+	    keysym = event.key.keysym.sym;
+	    key_press = 1;
+	    break;
+	    
+	  case SDL_QUIT: 
+	    printf("Quit requested, quitting.\n");
+	    exit(0);
+	    break;
+	  }
 	}
       }
+      if(keysym == SDLK_UP){
+	selected--;
+      } else if(keysym == SDLK_DOWN){
+	selected++;
+      }
     }
-    if(keysym == SDLK_UP){
-      selected--;
-    } else if(keysym == SDLK_DOWN){
-      selected++;
-    }
-    
-    int id = display_menu(buffer, "Main", &selected);
+    int action = display_menu(buffer, "Main", &selected);
     //if (display_menu(buffer, "Drives", &selected) < 0) printf("Error: Requested menu not found\n");
     if(keysym == SDLK_SPACE){
-      menu_function(id+selected+1);
+      menu_function(action);
     }
     printf("Selected=%d\n", selected);
-    printf("id=%d\n", id);
+    printf("action=%d\n", action);
 
     for(int j = 0; j < buffer->h; j++) {
       for(int i = 0; i < buffer->w; i++) {
