@@ -185,7 +185,7 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
   int  last_time;
   int  tmp;
   unsigned short color;
-  int top, rows=20, x, y, i, up=0;
+  int top, x, y, i, up=0;
   char path[MENU_FILE_MAX_PATH];
   char oldDir[MENU_FILE_MAX_NAME];
   char buffer[MENU_FILE_MAX_NAME];
@@ -195,7 +195,7 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
   int  file_selected;
   unsigned short text_color = SDL_MapRGB(surface->format, 200, 200, 200);
   unsigned short sel_color = SDL_MapRGB(surface->format, 128, 255, 128);
-
+  const int rows=22;
  
   memset(files, 0x00, sizeof(struct dirent) * MENU_FILE_MAX_ENTRY);
   memset(sortfiles, 0x00, sizeof(struct dirent *) * MENU_FILE_MAX_ENTRY);
@@ -216,10 +216,10 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
     x = 0; y = 15;
     
     SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
+    rect.x = 0;
+    rect.y = 0;
     rect.w = 270;
-    rect.h = rows*10;
+    rect.h = 320;
     SDL_FillRect(surface, &rect, 0);
     
     for(i=0; i<rows; i++){
@@ -258,7 +258,7 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
       }
     }
     
-    if ((new_pad == SDLK_a)) {
+    if ((new_pad == SDLK_SPACE)) {
       if (sortfiles[sel]->d_type == DT_DIR) {
         if(!strcmp(sortfiles[sel]->d_name,"..")){
           up=1;
