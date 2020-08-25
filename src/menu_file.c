@@ -3,18 +3,13 @@
 #include <dirent.h>
 #include <SDL/SDL.h>
 #include "font.h"
-#define MENU_FILE_MAX_ENTRY  2048
-
-#define MENU_FILE_MAX_NAME    256
-#define MENU_FILE_MAX_PATH    512
+#include "menu_file.h"
 
 static struct dirent files[MENU_FILE_MAX_ENTRY];
 static struct dirent *sortfiles[MENU_FILE_MAX_ENTRY];
 static int nfiles;
 
-static int user_file_format = 2;
-static void 
-SJISCopy(struct dirent *a, char *file)
+static void SJISCopy(struct dirent *a, char *file)
 {
   unsigned char ca;
   int i;
@@ -153,8 +148,7 @@ getDir(const char *path)
            (user_file_format != FMGR_FORMAT_JOY  ) &&
            (user_file_format != FMGR_FORMAT_STATE) ) ) 
     */
-    if  (format == user_file_format               )
-    {
+    if  ((format == 1) || (format == 2)) {
       nfiles++;
     }
   }
@@ -181,17 +175,13 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
 {
   static  int sel=0;
   SDL_Event event;
- 
-  int  last_time;
-  int  tmp;
   unsigned short color;
   int top, x, y, i, up=0;
   char path[MENU_FILE_MAX_PATH];
   char oldDir[MENU_FILE_MAX_NAME];
   char buffer[MENU_FILE_MAX_NAME];
   char *p;
-  long new_pad;
-  long old_pad;
+  long keysym;
   int  file_selected;
   unsigned short text_color = SDL_MapRGB(surface->format, 200, 200, 200);
   unsigned short sel_color = SDL_MapRGB(surface->format, 128, 255, 128);
@@ -204,8 +194,6 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
   strcpy(path, pszStartPath);
   getDir(path);
 
-  last_time = 0;
-  old_pad = 0;
   top = 0;
   file_selected = 0;
 
@@ -246,7 +234,7 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
       while(SDL_PollEvent(&event)) {
 	switch(event.type) {
 	case SDL_KEYDOWN:
-	  new_pad = event.key.keysym.sym;
+	  keysym = event.key.keysym.sym;
 	  key_press = 1;
 	  break;
 	  
@@ -258,7 +246,7 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
       }
     }
     
-    if ((new_pad == SDLK_SPACE)) {
+    if ((keysym == SDLK_SPACE)) {
       if (sortfiles[sel]->d_type == DT_DIR) {
         if(!strcmp(sortfiles[sel]->d_name,"..")){
           up=1;
@@ -274,19 +262,19 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
         file_selected = 1;
         break;
       }
-    } else if(new_pad == SDLK_b){
+    } else if(keysym == SDLK_b){
       up=1;
-    } else if(new_pad == SDLK_RETURN) {
+    } else if(keysym == SDLK_RCTRL) {
       /* Cancel */
       file_selected = 0;
       break;
-    } else if(new_pad == SDLK_UP){
+    } else if(keysym == SDLK_UP){
       sel--;
-    } else if(new_pad == SDLK_DOWN){
+    } else if(keysym == SDLK_DOWN){
       sel++;
-    } else if(new_pad == SDLK_LEFT){
+    } else if(keysym == SDLK_LEFT){
       sel-=10;
-    } else if(new_pad == SDLK_RIGHT){
+    } else if(keysym == SDLK_RIGHT){
       sel+=10;
     } 
        

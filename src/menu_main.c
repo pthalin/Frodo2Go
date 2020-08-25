@@ -23,12 +23,12 @@ int menu_size = sizeof(menu_items)/sizeof(menu_items[0]);
 int menu_len[32];
 
 enum menu_action_t menu_action;
-
+int prev_menu = 0;
 int current_menu = M_MAIN;
 int menu_refresh = 1;
 
 void init_menu() {
-  int i = 0;
+
   menu_action = M_MAIN;
   
   // Pre calculate nuber of items
@@ -52,7 +52,6 @@ void init_menu() {
 int display_menu(SDL_Surface* surface,  int menu_id, int *selected) {
   unsigned short text_color = SDL_MapRGB(surface->format, 200, 200, 200);
   unsigned short sel_color = SDL_MapRGB(surface->format, 128, 255, 128);
-  int k;
   SDL_Rect rect;
   rect.x = 0;
   rect.y = 0;
@@ -82,7 +81,7 @@ int display_menu(SDL_Surface* surface,  int menu_id, int *selected) {
 }
 
 
-int menu_function(int action) {
+void menu_function(int action) {
 
   switch(action){
   case EXIT:
@@ -91,6 +90,7 @@ int menu_function(int action) {
     break;
   case DRIVES:
     printf("Drives\n");
+    prev_menu = current_menu;
     current_menu = M_DRIVES;
     menu_refresh = 1;
     break;
@@ -98,6 +98,9 @@ int menu_function(int action) {
   case DRIVE9:
   case DRIVE10:
   case DRIVE11:
+    printf("File sel\n");
+    printf("Drive idx = %d\n", action-DRIVE8);
+    prev_menu = current_menu;
     current_menu = FILE_REQUEST;
     break;
   }
@@ -108,7 +111,7 @@ int menu_function(int action) {
 int main() {
   long keysym = -1;
   SDL_Event event;
-  char myfile[512];
+  char myfile[512] = "";
   char mypath[512] = "/home/";
   SDL_Init( SDL_INIT_EVERYTHING );
   init_menu(); 
@@ -144,27 +147,33 @@ int main() {
 	  }
 	}
       }
-      if(keysym == SDLK_UP){
+      if(keysym == SDLK_UP) {
 	selected--;
-      } else if(keysym == SDLK_DOWN){
+      } else if(keysym == SDLK_DOWN) {
 	selected++;
+      } else if (keysym == SDLK_LEFT) {
+	current_menu = prev_menu;
+	selected = 0;
+      } else if(keysym == SDLK_SPACE) {
+	printf("action=%d\n", action);
+	menu_function(action);
       }
     }
+   
+  
     if (current_menu == FILE_REQUEST) {
       int valid = menu_file_request(screen, myfile, mypath);
       printf("valind = %d\n", valid);
       printf("file = %s\n", myfile);
       printf("path = %s\n", mypath);
-      
+      current_menu = M_DRIVES;
+      prev_menu = M_MAIN;
+      menu_refresh = 1;
       action = NO_ACTION;
     } else {
       action = display_menu(buffer, current_menu, &selected);
     }
     
-    if(keysym == SDLK_SPACE){
-      printf("action=%d\n", action);
-      menu_function(action);
-    }
     //  printf("Selected=%d\n", selected);
     
 
