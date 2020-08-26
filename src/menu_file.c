@@ -206,8 +206,8 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
     SDL_Rect rect;
     rect.x = 0;
     rect.y = 0;
-    rect.w = 270;
-    rect.h = 320;
+    rect.w = 320;
+    rect.h = 240;
     SDL_FillRect(surface, &rect, 0);
     
     for(i=0; i<rows; i++){
@@ -246,7 +246,7 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
       }
     }
     
-    if ((keysym == SDLK_SPACE)) {
+    if ((keysym == SDLK_LALT)) { 
       if (sortfiles[sel]->d_type == DT_DIR) {
         if(!strcmp(sortfiles[sel]->d_name,"..")){
           up=1;
@@ -262,9 +262,9 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
         file_selected = 1;
         break;
       }
-    } else if(keysym == SDLK_b){
+    } else if(keysym == SDLK_LSHIFT){
       up=1;
-    } else if(keysym == SDLK_RCTRL) {
+    } else if(keysym == SDLK_LCTRL) {
       /* Cancel */
       file_selected = 0;
       break;
@@ -273,9 +273,9 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
     } else if(keysym == SDLK_DOWN){
       sel++;
     } else if(keysym == SDLK_LEFT){
-      sel-=10;
+      sel-=11;
     } else if(keysym == SDLK_RIGHT){
-      sel+=10;
+      sel+=11;
     } 
        
     if(up) {
