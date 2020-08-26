@@ -126,23 +126,16 @@ void menu_function(int action) {
   
 
 
-int main() {
+void start_menu(SDL_Surface *buffer, SDL_Surface *screen) {
   long keysym = -1;
   SDL_Event event;
   char myfile[512] = "";
   char mypath[512] = "/home/";
   char *filename;
-  SDL_Init( SDL_INIT_EVERYTHING );
-
-  
-  SDL_Surface* screen = SDL_SetVideoMode(320, 240, 16, SDL_DOUBLEBUF);
-  SDL_Surface* buffer = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
-
-  init_menu(buffer); 
-  
-  SDL_LockSurface(buffer);
   int action = NO_ACTION;
   int selected = 0;
+  
+  SDL_LockSurface(buffer);
   menu_refresh = 1;
   
   while(1) {
@@ -244,5 +237,19 @@ int main() {
   
 
 }
+
+#ifdef TEST_KEYBOARD
+int main() {
+  SDL_Init( SDL_INIT_EVERYTHING );
+
+  
+  SDL_Surface* screen = SDL_SetVideoMode(320, 240, 16, SDL_DOUBLEBUF);
+  SDL_Surface* buffer = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+
+  init_menu(buffer); 
+
+  start_menu(buffer, screen);
+}
+#endif
 
 
