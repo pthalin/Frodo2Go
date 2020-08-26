@@ -37,10 +37,12 @@ int menu_refresh = 1;
 
 int current_drive = 0;
 
+int status;
+
 void init_menu(SDL_Surface* surface) {
 
   menu_action = M_MAIN;
-
+  status = 0;
   text_color = SDL_MapRGB(surface->format, 200, 200, 200);
   sel_color = SDL_MapRGB(surface->format, 128, 255, 128);
   warning_color = SDL_MapRGB(surface->format, 255, 255, 0);
@@ -99,7 +101,12 @@ int display_menu(SDL_Surface* surface,  int menu_id, int *selected) {
 
 void menu_function(int action) {
 
-  switch(action){
+  status = 0;
+  
+  switch(action) {
+  case RESET:
+    status = 10;
+    break;
   case EXIT:
     //printf("Exit\n");
     exit(0);
@@ -125,8 +132,7 @@ void menu_function(int action) {
 }
   
 
-
-void start_menu(SDL_Surface *buffer, SDL_Surface *screen) {
+int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256])  {
   long keysym = -1;
   SDL_Event event;
   char myfile[512] = "";
@@ -134,11 +140,14 @@ void start_menu(SDL_Surface *buffer, SDL_Surface *screen) {
   char *filename;
   int action = NO_ACTION;
   int selected = 0;
-  
+  int exit_menu = 0;
   SDL_LockSurface(buffer);
   menu_refresh = 1;
+
+
+ 
   
-  while(1) {
+  while(exit_menu == 0) {
     int key_press = 0;
     if (menu_refresh) {
       menu_refresh = 0;
@@ -158,8 +167,18 @@ void start_menu(SDL_Surface *buffer, SDL_Surface *screen) {
 	  }
 	}
       }
+
+      switch (status) {
+      case 10:
+	return 10;
+	break;
+      }
       
       switch(keysym) {
+      case SDLK_RCTRL:
+	exit_menu = 1;
+	printf("XXXXX\n");
+	break;
       case SDLK_UP:
 	selected--;
 	break;
@@ -180,7 +199,7 @@ void start_menu(SDL_Surface *buffer, SDL_Surface *screen) {
    
   
     if (current_menu == FILE_REQUEST) {
-      int valid = menu_file_request(screen, myfile, mypath);
+      int valid = menu_file_request(screen, buffer, myfile, mypath);
       //printf("valind = %d\n", valid);
       //printf("file = %s\n", myfile);
       //printf("path = %s\n", mypath);
@@ -197,6 +216,8 @@ void start_menu(SDL_Surface *buffer, SDL_Surface *screen) {
       if (valid == 1) { 
 	sprintf(tmp, "Success: Drive %d set to %s", current_drive+8, filename);
 	draw_string_osd(buffer, tmp, 10, 140, sel_color);
+	strcpy(drive_path[current_drive], filename);
+	printf("FILE =%s\n", filename);
       } else {
 	sprintf(tmp, "Warning: Drive %d was not set!", current_drive+8);
 	draw_string_osd(buffer, tmp, 10, 140, warning_color);
@@ -234,8 +255,8 @@ void start_menu(SDL_Surface *buffer, SDL_Surface *screen) {
       msg_active--;
     
   }
-  
-
+  //  printf("Leaving menu\n");
+  return 0;
 }
 
 #ifdef TEST_KEYBOARD

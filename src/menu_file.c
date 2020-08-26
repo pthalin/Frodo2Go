@@ -171,7 +171,7 @@ void string_fill_with_space(char *buffer, int size)
 }
 
 
-int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
+int menu_file_request(SDL_Surface* screen, SDL_Surface* s_buffer, char *out, char *pszStartPath)
 {
   static  int sel=0;
   SDL_Event event;
@@ -183,8 +183,8 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
   char *p;
   long keysym;
   int  file_selected;
-  unsigned short text_color = SDL_MapRGB(surface->format, 200, 200, 200);
-  unsigned short sel_color = SDL_MapRGB(surface->format, 128, 255, 128);
+  unsigned short text_color = SDL_MapRGB(s_buffer->format, 200, 200, 200);
+  unsigned short sel_color = SDL_MapRGB(s_buffer->format, 128, 255, 128);
   const int rows=22;
  
   memset(files, 0x00, sizeof(struct dirent) * MENU_FILE_MAX_ENTRY);
@@ -208,7 +208,7 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
     rect.y = 0;
     rect.w = 320;
     rect.h = 240;
-    SDL_FillRect(surface, &rect, 0);
+    SDL_FillRect(s_buffer, &rect, 0);
     
     for(i=0; i<rows; i++){
       if(top+i >= nfiles) {
@@ -222,11 +222,19 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
       }
       strncpy(buffer, sortfiles[top+i]->d_name, 28);
       string_fill_with_space(buffer, 28);
-      draw_string_osd(surface, buffer, x, y, color);
+      draw_string_osd(s_buffer, buffer, x, y, color);
       y += 10;
     }
 
-    SDL_Flip(surface);
+    SDL_Rect brect;
+    brect.x = 0;
+    brect.y = 0;
+    brect.w = 320;
+    brect.h = 240;
+    
+    SDL_BlitSurface(s_buffer, &brect, screen, &brect);
+
+    SDL_Flip(screen);
   
     int key_press = 0;
     while(key_press == 0) {
@@ -265,6 +273,10 @@ int menu_file_request(SDL_Surface* surface, char *out, char *pszStartPath)
     } else if(keysym == SDLK_LSHIFT){
       up=1;
     } else if(keysym == SDLK_LCTRL) {
+      /* Cancel */
+      file_selected = 0;
+      break;
+    } else if(keysym == SDLK_RCTRL) {
       /* Cancel */
       file_selected = 0;
       break;

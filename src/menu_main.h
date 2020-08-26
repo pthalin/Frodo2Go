@@ -6,8 +6,7 @@ extern "C"
 {
 #endif
   void init_menu(SDL_Surface* surface);
-  void start_menu(SDL_Surface *buffer, SDL_Surface *screen);
-  
+  int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]);
   
 #ifdef __cplusplus
 }

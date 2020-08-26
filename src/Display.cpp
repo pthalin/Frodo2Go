@@ -32,6 +32,7 @@
 
 #include "sdlgui.h"
 //#include "dlgMain.h"
+#include "menu_main.h"
 
 #define QWS
 #include <SDL/SDL.h>
@@ -335,6 +336,7 @@ int init_graphics(void)
       fprintf(stderr, "SDL Set video mode to %d x %d\n", width, height);
       //SDLGui_Init(screen);
       //start_GUI_thread();
+      init_menu(screen);
     }
   return 1;
 }
@@ -738,7 +740,9 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 
 void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joystick)
 {
+  SDL_Surface* m_buffer = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
   SDL_Event event;
+  int menu_status = 0;
   static bool cmd_key_up = false;
   static unsigned int cmd_pos = 0;
   static unsigned int start_delay = 180;
@@ -868,7 +872,18 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		  switch (event.key.keysym.sym)
 		    {
 		    case SDLK_RCTRL:	// R: Exit
-		      quit_requested = true;
+		      DialogPrefs = ThePrefs;
+		      menu_status = start_menu(m_buffer, screen, DialogPrefs.DrivePath);
+		      TheC64->NewPrefs(&DialogPrefs);
+		      printf("##%s##n", ThePrefs.DrivePath[0]);
+
+		      switch (menu_status) {
+		      case 10:
+			TheC64->Reset();
+			break;
+		      }
+		      
+		      //quit_requested = true;
 		      break;
 		    case SDLK_RETURN: // START
 		      //if (!(event.key.keysym.mod & KMOD_SYNTHETIC)) {
