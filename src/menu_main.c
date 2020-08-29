@@ -100,8 +100,6 @@ int display_menu(SDL_Surface* surface,  int menu_id, int *selected) {
 
 
 void menu_function(int action) {
-
-  status = 0;
   
   switch(action) {
   case RESET:
@@ -143,9 +141,7 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
   int exit_menu = 0;
   SDL_LockSurface(buffer);
   menu_refresh = 1;
-
-
- 
+  status = 0;
   
   while(exit_menu == 0) {
     int key_press = 0;
@@ -177,7 +173,6 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
       switch(keysym) {
       case SDLK_RCTRL:
 	exit_menu = 1;
-	printf("XXXXX\n");
 	break;
       case SDLK_UP:
 	selected--;
@@ -187,8 +182,13 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
 	break;
       case SDLK_LCTRL:
       case SDLK_LEFT:
-	current_menu = prev_menu;
-	selected = 0;
+	if (current_menu == M_MAIN) {
+	  exit_menu = 1;
+	}
+	else {
+	  current_menu = prev_menu;
+	  selected = 0;
+	}
 	break;
       case SDLK_LALT:
       case SDLK_RIGHT:

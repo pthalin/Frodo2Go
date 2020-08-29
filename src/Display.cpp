@@ -689,10 +689,10 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
     switch (key)
       {
 	
-      case SDLK_LCTRL: c64_key = 0x10 | 0x40; break; //A fire
-      case SDLK_SPACE: c64_key = 0x01 | 0x40; break; //B up
-	//case SDLK_LSHIFT: c64_key = 0x01 | 0x40; break; //TA up
-	//case SDLK_SPACE: c64_key = 0x10 | 0x40; break; //B fire
+      case SDLK_LALT:  c64_key = 0x10 | 0x40; break;  //fire
+      case SDLK_LCTRL:  c64_key = 0x01 | 0x40; break; // up
+      case SDLK_LSHIFT: return;
+      case SDLK_SPACE:  return;
 	
       case SDLK_UP:    c64_key = 0x01 | 0x40; break;
       case SDLK_DOWN:  c64_key = 0x02 | 0x40; break;
@@ -871,7 +871,9 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		{
 		  switch (event.key.keysym.sym)
 		    {
-		    case SDLK_RCTRL:	// R: Exit
+		    case SDLK_RCTRL:	// R
+		      SDL_PauseAudio(1);
+
 		      DialogPrefs = ThePrefs;
 		      menu_status = start_menu(m_buffer, screen, DialogPrefs.DrivePath);
 		      TheC64->NewPrefs(&DialogPrefs);
@@ -882,7 +884,7 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 			TheC64->Reset();
 			break;
 		      }
-		      
+		      SDL_PauseAudio(0);
 		      //quit_requested = true;
 		      break;
 		    case SDLK_RETURN: // START
