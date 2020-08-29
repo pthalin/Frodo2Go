@@ -296,6 +296,7 @@ int handle_keyboard_event(SDL_Event* event) {
 	    shifted = 1;
 	    toggled[4][5] = 1;
 	    update_modstate(SDLK_LSHIFT, STATE_DOWN);
+	    simulate_key(SDLK_LSHIFT, STATE_DOWN);
 	    //BACKSPACE
 	  } else if(event->key.keysym.sym == KEY_BACKSPACE) {
 	    simulate_key(SDLK_BACKSPACE, STATE_TYPED);
@@ -331,14 +332,17 @@ int handle_keyboard_event(SDL_Event* event) {
 	    */
 	    simulate_key(key, STATE_TYPED);
 	    result = 2;
-	    if ((key == SDLK_F14) && shifted)
-	      if (text_mode) text_mode=0; else text_mode=2; //SHIFT + C=x
+	    if ((key == SDLK_F14) && shifted) {
+	      if (text_mode > 0) text_mode = 0; else text_mode=2; //SHIFT + C=x
+	      //	      printf("text mode = %d\n", text_mode);
+	    }
 	  }
 	} else if(event->key.type == SDL_KEYUP || event->key.state == SDL_RELEASED) {
 	  if(event->key.keysym.sym == KEY_SHIFT) {
 	    shifted = 0;
 	    toggled[4][5] = 0;
 	    update_modstate(SDLK_LSHIFT, STATE_UP);
+	    simulate_key(SDLK_LSHIFT, STATE_UP);
 	  }
 	}
 	return result;

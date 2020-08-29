@@ -6,7 +6,7 @@ mkdir release/Frodo2Go
 mkdir release/menu
 
 cd src
-#make clean&&make -f Makefile.bittboy 
+make clean&&make -f Makefile.bittboy 
 cd ..
 
 cp src/Frodo release/Frodo2Go/

@@ -134,7 +134,7 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
   long keysym = -1;
   SDL_Event event;
   char myfile[512] = "";
-  char mypath[512] = "/home/";
+  char mypath[512] = "/mnt/roms/C64/";
   char *filename;
   int action = NO_ACTION;
   int selected = 0;
@@ -163,12 +163,6 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
 	  }
 	}
       }
-
-      switch (status) {
-      case 10:
-	return 10;
-	break;
-      }
       
       switch(keysym) {
       case SDLK_RCTRL:
@@ -196,7 +190,13 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
 	break;
       }
     }
-   
+
+    switch (status) {
+    case 10:
+      return 10;
+      break;
+    }
+    
   
     if (current_menu == FILE_REQUEST) {
       int valid = menu_file_request(screen, buffer, myfile, mypath);

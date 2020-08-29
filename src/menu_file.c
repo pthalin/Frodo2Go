@@ -291,6 +291,11 @@ int menu_file_request(SDL_Surface* screen, SDL_Surface* s_buffer, char *out, cha
     } 
        
     if(up) {
+      //printf("path:#%s#\n", path);
+      if(path[1] == NULL){
+      	up = 0;
+	//printf("Root\n");
+      } else
       if(strcmp(path,"./")){
         p=strrchr(path,'/');
         *p=0;

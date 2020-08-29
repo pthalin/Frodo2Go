@@ -1,7 +1,8 @@
-A  = ?
-B  = Fire
-TA = 1
-TB = Up
-R = Exit
+V90
+A  = Fire
+B  = Up/Jump
+TA = -
+TB = -
+R = Menu
 SELECT = Toggel Joystick port
-START  = Togggle Keybaod
+START  = Togggle Keyboard
