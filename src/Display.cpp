@@ -378,6 +378,14 @@ void C64Display::NewPrefs(Prefs *prefs)
 
 void C64Display::Update(void)
 {
+  static int display_timer = -1;
+  static int prev_joy_emu = 1;
+
+  if (prev_joy_emu != joy_emu) {
+    display_timer = 60;
+  }
+  prev_joy_emu = joy_emu;
+  
   screenlock();
   if (surf == NULL)
     return;
@@ -465,13 +473,19 @@ void C64Display::Update(void)
   draw_string(surf, DISPLAY_X * 1/5 + 8, (surf->h - 17) + 4, "D\x12 8", black, fill_gray);
   draw_string(surf, DISPLAY_X * 2/5 + 8, (surf->h - 17) + 4, "D\x12 9", black, fill_gray);
   draw_string(surf, DISPLAY_X * 3/5 + 8, (surf->h - 17) + 4, "D\x12 10", black, fill_gray);
-  if (joy_emu == 1)
-    draw_string(surf, DISPLAY_X * 4/5 + 2, (surf->h - 17) + 4, "1", black, fill_gray);
-  else if (joy_emu == 2)
-    draw_string(surf, DISPLAY_X * 4/5 + 2, (surf->h - 17) + 4, "2", black, fill_gray);
-  draw_string(surf, 24, (surf->h - 17) + 4, speedometer_string, black, fill_gray);
-
 #endif
+  if ((joy_emu == 1) && (display_timer > 0)) {
+    draw_string(surf, 240, (surf->h - 17) + 4, "JOY 1", black, fill_gray);
+    display_timer--;
+  }
+  else if ((joy_emu == 2) && (display_timer > 0)) {
+    display_timer--;
+    draw_string(surf, 240, (surf->h - 17) + 4, "JOY 2", black, fill_gray);
+  }
+
+  //draw_string(surf, 24, (surf->h - 17) + 4, speedometer_string, black, fill_gray);
+
+
   // Update display
   SDL_Flip(surf);
 
@@ -858,7 +872,7 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		  if (joy_emu < 2)
 		    joy_emu++;
 		  else
-		    joy_emu = 0;
+		    joy_emu = 1;
 		}
 	      /*
 		if (tab_pressed && event.key.keysym.sym == SDLK_p)
@@ -877,7 +891,6 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		      DialogPrefs = ThePrefs;
 		      menu_status = start_menu(m_buffer, screen, DialogPrefs.DrivePath);
 		      TheC64->NewPrefs(&DialogPrefs);
-		      printf("##%s##n", ThePrefs.DrivePath[0]);
 
 		      switch (menu_status) {
 		      case 10:
