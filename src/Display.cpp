@@ -414,7 +414,7 @@ void C64Display::Update(void)
     if(keyboard_pos)
       drect.y = 197;
     else
-      drect.y = 0;
+      drect.y = 2;
     SDL_BlitSurface(kb_buffer, &rect, screen, &drect);
   }
 	
@@ -655,7 +655,8 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
       case SDLK_END: c64_key = MATRIX(6,0); break;
       case SDLK_PAGEUP: c64_key = MATRIX(6,0); break;
       case SDLK_PAGEDOWN: c64_key = MATRIX(6,5); break;
-	
+
+      case SDLK_F10: c64_key = MATRIX(7,2); break;
       case SDLK_F14: c64_key = MATRIX(7,5); break;
       case SDLK_LSHIFT: c64_key = MATRIX(1,7); break;
       case SDLK_RSHIFT: c64_key = MATRIX(6,4); break;
@@ -703,15 +704,15 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
     switch (key)
       {
 	
-      case SDLK_LALT:  c64_key = 0x10 | 0x40; break;  //fire
-      case SDLK_LCTRL:  c64_key = 0x01 | 0x40; break; // up
-      case SDLK_LSHIFT: return;
-      case SDLK_SPACE:  return;
+      case SDLK_LALT:  c64_key = 0x10 | 0x40; break; //fire
+      case SDLK_LCTRL: c64_key = 0x01 | 0x40; break; //up
 	
       case SDLK_UP:    c64_key = 0x01 | 0x40; break;
       case SDLK_DOWN:  c64_key = 0x02 | 0x40; break;
       case SDLK_LEFT:  c64_key = 0x04 | 0x40; break;
       case SDLK_RIGHT: c64_key = 0x08 | 0x40; break;
+	
+      default: return; //No action on unmapped keys
       }
 	
     // Handle joystick emulation
@@ -874,13 +875,6 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		  else
 		    joy_emu = 1;
 		}
-	      /*
-		if (tab_pressed && event.key.keysym.sym == SDLK_p)
-		{
-		//  NMI (Restore)
-		TheC64->NMI();
-		}
-	      */
 	      else
 		{
 		  switch (event.key.keysym.sym)
@@ -900,21 +894,21 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		      SDL_PauseAudio(0);
 		      //quit_requested = true;
 		      break;
+		      
 		    case SDLK_RETURN: // START
-		      //if (!(event.key.keysym.mod & KMOD_SYNTHETIC)) {
-		      {
-			//keyboard_enable = !keyboard_enable;
-			if (keyboard_enable && keyboard_pos)
-			  keyboard_pos = false;
-			else {
-			 keyboard_enable = !keyboard_enable;
-			 keyboard_pos = true;
-			}
-	       	
+		      if (keyboard_enable && keyboard_pos)
+			keyboard_pos = false;
+		      else {
+			keyboard_enable = !keyboard_enable;
+			keyboard_pos = true;
 		      }
 		      break;
+		      
+		    case SDLK_F13:
+		      TheC64->NMI(); //  NMI (Restore)
+		      break;
 
-		    case SDLK_F12:	// F12: Reset
+		    case SDLK_F12:
 		      TheC64->Reset();
 		      break;
 		      
@@ -926,18 +920,17 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 			case SDLK_KP_MINUS:	// '-' on keypad: Decrease SkipFrames
 			if (ThePrefs.SkipFrames > 1)
 			ThePrefs.SkipFrames--;
-							break;
-							
-						case SDLK_KP_MULTIPLY:	// '*' on keypad: Toggle speed limiter
-						ThePrefs.LimitSpeed = !ThePrefs.LimitSpeed;
-						break;
-							*/
+			break;
+						
+			case SDLK_KP_MULTIPLY:	// '*' on keypad: Toggle speed limiter
+			ThePrefs.LimitSpeed = !ThePrefs.LimitSpeed;
+			break;
+		      */
 		    default:
 		      if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
 			translate_key(event.key.keysym.sym, false, key_matrix, rev_matrix, joystick);
 			return;
 		      }
-		      break;
 		    }
 		}
 	      break;
@@ -953,7 +946,6 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		}
 	      break;
 
-	      // Quit Frodo
 	    case SDL_QUIT:
 	      quit_requested = true;
 	      break;
@@ -963,11 +955,7 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 }
 
 
-/*
- *  Check if NumLock is down (for switching the joystick keyboard emulation)
- */
-
-bool C64Display::NumLock(void)
+bool C64Display::JoyStick1(void)
 {
   if (joy_emu == 2)
     return true;

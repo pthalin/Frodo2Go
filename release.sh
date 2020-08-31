@@ -3,7 +3,7 @@
 rm -rf release
 mkdir release
 mkdir release/Frodo2Go
-mkdir release/menu
+#mkdir release/menu
 
 cd src
 make clean&&make -f Makefile.bittboy 

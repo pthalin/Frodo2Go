@@ -875,7 +875,7 @@ void C64::VBlank(bool draw_frame)
 	}
 
 	// Joystick keyboard emulation
-	if (TheDisplay->NumLock())
+	if (TheDisplay->JoyStick1())
 		TheCIA1->Joystick1 &= joykey;
 	else
 		TheCIA1->Joystick2 &= joykey;

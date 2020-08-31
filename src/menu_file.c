@@ -292,7 +292,7 @@ int menu_file_request(SDL_Surface* screen, SDL_Surface* s_buffer, char *out, cha
        
     if(up) {
       //printf("path:#%s#\n", path);
-      if(path[1] == NULL){
+      if(path[1] == '\0') {
       	up = 0;
 	//printf("Root\n");
       } else

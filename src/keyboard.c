@@ -19,8 +19,8 @@ static int row_length[NUM_ROWS] = {15, 15, 15, 14, 7};
 static SDLKey keys[NUM_ROWS][NUM_KEYS] = {
   {SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8,     SDLK_9,      SDLK_0,     SDLK_PLUS,     SDLK_MINUS,    SDLK_END,       SDLK_PRINT,     SDLK_F1},
   {SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,     SDLK_o,      SDLK_p,     SDLK_AT,       SDLK_ASTERISK, SDLK_BACKQUOTE, SDLK_BACKSPACE, SDLK_F3},
-  {SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,     SDLK_l,      SDLK_COLON, SDLK_SEMICOLON,SDLK_EQUALS,   SDLK_BACKSLASH, SDLK_SPACE,     SDLK_F5},
-  {SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_UP,       SDLK_KP_ENTER, SDLK_LCTRL,                     SDLK_F7},
+  {SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,     SDLK_l,      SDLK_COLON, SDLK_SEMICOLON,SDLK_EQUALS,   SDLK_BACKSLASH, SDLK_F13,       SDLK_F5},
+  {SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_UP,       SDLK_KP_ENTER, SDLK_F10,                       SDLK_F7},
   {SDLK_BREAK, SDLK_SPACE,                                                          SDLK_LEFT,  SDLK_DOWN,     SDLK_RIGHT,    SDLK_RSHIFT,    SDLK_F14}
 };
 

@@ -73,7 +73,7 @@ public:
 #else
 	void PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joystick);
 #endif
-	bool NumLock(void);
+	bool JoyStick1(void);
 	void InitColors(uint8 *colors);
 	void NewPrefs(Prefs *prefs);
 

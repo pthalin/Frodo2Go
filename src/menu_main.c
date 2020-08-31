@@ -7,12 +7,12 @@
 
 char const  *menu_items[] =
   {
-    "M:Main",   "Drives", "Reset", "Exit",  NULL,
-    "M:Drives", "Drive 8", "Drive 9", "Drive 10", "Drive 11",NULL,
+    "M:Main",   "Load Drives", "Reset", "Quit",  NULL,
+    "M:Drives", "Drive 8", "Drive 9", "Drive 10", "Drive 11", NULL,
   };
 
 enum menu_action_t {
-  M_MAIN,   DRIVES,  RESET,   EXIT, N_MAIN,
+  M_MAIN,   DRIVES,  RESET, EXIT, N_MAIN,
   M_DRIVES, DRIVE8,  DRIVE9,  DRIVE10,  DRIVE11, N_DRIVES,
   FILE_REQUEST,
   NO_ACTION
@@ -80,9 +80,9 @@ int display_menu(SDL_Surface* surface,  int menu_id, int *selected) {
   draw_string_osd(surface, menu_items[menu_id]+2, 10, 10, text_color);
 
   while(*selected < 0)
-    *selected = *selected + menu_len[menu_id]; //Wrap up if ative
+    *selected = *selected + menu_len[menu_id]; //Wrap up if negative
   
-  *selected = *selected % menu_len[menu_id]; //Wrap overflow 
+  *selected = *selected % menu_len[menu_id]; //Wrap overflow
   int x = 20;
   int j = 1;
   while (menu_items[menu_id+j]) {
