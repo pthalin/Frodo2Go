@@ -24,20 +24,16 @@
 #include "main.h"
 #include "Prefs.h"
 #include "C64.h"
-//#include "SAM.h"
 
 #include "keyboard.h"
 #include "main.h"
 #include "Version.h"
 
 #include "sdlgui.h"
-//#include "dlgMain.h"
 #include "menu_main.h"
 
-#define QWS
 #include <SDL/SDL.h>
 #include <SDL/SDL_thread.h>
-
 
 // LED states
 enum {
@@ -99,7 +95,6 @@ void C64Display::UpdateLEDs(int l0, int l1, int l2, int l3)
 
 // Display surface
 static SDL_Surface *screen = 0;
-static SDL_Surface *backgroundSurf = 0;
 static SDL_Surface *surf = 0;
 
 static SDL_mutex *screenLock = 0;
@@ -117,6 +112,8 @@ static itimerval pulse_tv;
 
 // SDL joysticks
 static SDL_Joystick *joy[2] = {NULL, NULL};
+
+static Prefs DialogPrefs;
 
 // Colors for speedometer/drive LEDs
 enum 
@@ -152,8 +149,6 @@ char *buffer;
 const int width = 320;
 const int height = 240;
 
-bool isGuiAvailable = true; // TODO from main.cpp
-bool GUIOpened = false;
 bool keyboard_enable = false;
 bool keyboard_pos = true;
 
@@ -161,15 +156,14 @@ static SDL_Thread *GUIthread = NULL;
 static const int GUI_RETURN_INFO = (SDL_USEREVENT+1);
 static bool doUpdate = true;
 
-void update( int32 x, int32 y, int32 w, int32 h, bool forced )
+void update(int32 x, int32 y, int32 w, int32 h, bool forced)
 {
   if ( !forced && !doUpdate ) // the HW surface is available
     return;
   SDL_UpdateRect(screen, x, y, w, h);
-
 }
 
-void update( bool forced )
+void update(bool forced)
 {
   update( 0, 0, width, height, forced );
 }
@@ -179,120 +173,7 @@ void update()
   update( 0, 0, width, height, false );
 }
 
-void restoreBackground()
-{
-  if (backgroundSurf != NULL) {
-    SDL_BlitSurface(backgroundSurf, NULL, screen, NULL);
-    update(true);
-    fprintf(stderr, "video surface restored\n");
-  }
-}
 
-void allocateBackgroundSurf()
-{
-  // allocate new background video surface
-  backgroundSurf = SDL_ConvertSurface(screen, screen->format, screen->flags);
-  fprintf(stderr, "Allocating background video surface\n");
-}
-
-void freeBackgroundSurf()
-{
-  // free background video surface
-  if (backgroundSurf != NULL) 
-    {
-      fprintf(stderr, "Freeing background video surface\n");
-      SDL_FreeSurface(backgroundSurf);
-      backgroundSurf = NULL;
-    }
-}
-
-void openGUI()
-{
-  fprintf(stderr, "open GUI\n");
-  if (GUIOpened) 
-    {
-      fprintf(stderr, "GUI is already open!\n");
-      return;
-    }
-  allocateBackgroundSurf();
-  surf = backgroundSurf;
-  GUIOpened = true;
-}
-
-void closeGUI()
-{
-  fprintf(stderr, "close GUI\n");
-  // update the main surface and then redirect VDI to it
-  restoreBackground();
-  surf = screen;			// redirect VDI to main surface
-  fprintf(stderr, "VDI redirected back to main video surface\n");
-  freeBackgroundSurf();
-  GUIOpened = false;
-}
-
-void saveBackground()
-{
-  if (backgroundSurf != NULL) {
-    SDL_BlitSurface(screen, NULL, backgroundSurf, NULL);
-    surf = backgroundSurf;	// redirect VDI to background surface
-    fprintf(stderr, "video surface saved to background, VDI redirected\n");
-  }
-}
-
-void blendBackgrounds()
-{
-  /*
-  if (backgroundSurf != NULL) 
-    {
-      SDL_Rect *Rect;
-      Rect = SDLGui_GetFirstBackgroundRect();
-      while (Rect != NULL) 
-	{
-	  SDL_BlitSurface(backgroundSurf, Rect, screen, Rect);
-	  Rect = SDLGui_GetNextBackgroundRect();
-	}
-      update(true);
-    }
-  */
-}
-
-static Prefs DialogPrefs; 
-
-// running in a different thread
-static int open_gui(void * /*ptr*/)
-{
-  /*
-  openGUI();
-  DialogPrefs = ThePrefs;
-  // Show main dialog
-   int status = Dialog_Main(DialogPrefs);
-  // The status is sent to event checking thread by the USEREVENT+1 message
-  SDL_Event ev;
-  ev.type = GUI_RETURN_INFO;
-  ev.user.code = status;	// STATUS_SHUTDOWN or STATUS_REBOOT
-  ev.user.data1 = NULL;
-  SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(GUI_RETURN_INFO));
-  closeGUI();
-  */
-  return 0;
-}
-
-bool start_GUI_thread()
-{
-  if (isGuiAvailable) // TODO && !hostScreen.isGUIopen()) 
-    {
-      GUIthread = SDL_CreateThread(open_gui, NULL);
-    }
-  return (GUIthread != NULL);
-}
-
-void kill_GUI_thread()
-{
-  if (GUIthread != NULL) {
-    SDL_KillThread(GUIthread);
-    GUIthread = NULL;
-  }
-}
 
 void screenlock() 
 {
@@ -320,24 +201,17 @@ int init_graphics(void)
   }
 
   screenLock = SDL_CreateMutex();
-  
   buffer = new char[DISPLAY_X*DISPLAY_Y];
-  // Open window
   SDL_WM_SetCaption(VERSION_STRING, "Frodo");
   screen = SDL_SetVideoMode(width, height, 8, SDL_DOUBLEBUF);
   SDL_ShowCursor(SDL_DISABLE);
   surf = screen;
-  if (screen == NULL)
-    {
-      fprintf(stderr, "SDL Couldn't set video mode to %d x %d\n", width, height);
-    }
-  else
-    {
-      fprintf(stderr, "SDL Set video mode to %d x %d\n", width, height);
-      //SDLGui_Init(screen);
-      //start_GUI_thread();
-      init_menu(screen);
-    }
+  if (screen == NULL)  {
+    fprintf(stderr, "SDL Couldn't set video mode to %d x %d\n", width, height);
+  }
+  else {
+    init_menu(screen);
+  }
   return 1;
 }
 
@@ -489,7 +363,7 @@ void C64Display::Update(void)
   // Update display
   SDL_Flip(surf);
 
-  blendBackgrounds();
+
   screenunlock();
 }
 
@@ -625,77 +499,65 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
       case SDLK_9: c64_key = MATRIX(4,0); break;
       case SDLK_0: c64_key = MATRIX(4,3); break;
 	
-      case SDLK_EXCLAIM: c64_key = MATRIX(7,0) |0x80; break;
-      case SDLK_QUOTEDBL: c64_key = MATRIX(7,3) | 0x80; break;
-      case SDLK_HASH: c64_key = MATRIX(1,0)|0x80; break;
-      case SDLK_DOLLAR: c64_key = MATRIX(1,3)|0x80; break;
-      case SDLK_F15: c64_key = MATRIX(2,0)|0x80; break; //%
-      case SDLK_AMPERSAND: c64_key = MATRIX(2,3); break;
-      case SDLK_QUOTE: c64_key = MATRIX(3,0); break;
-      case SDLK_LEFTPAREN: c64_key = MATRIX(3,3); break;
+      case SDLK_EXCLAIM:    c64_key = MATRIX(7,0)|0x80; break;
+      case SDLK_QUOTEDBL:   c64_key = MATRIX(7,3)|0x80; break;
+      case SDLK_HASH:       c64_key = MATRIX(1,0)|0x80; break;
+      case SDLK_DOLLAR:     c64_key = MATRIX(1,3)|0x80; break;
+      case SDLK_F15:        c64_key = MATRIX(2,0)|0x80; break; //%
+      case SDLK_AMPERSAND:  c64_key = MATRIX(2,3); break;
+      case SDLK_QUOTE:      c64_key = MATRIX(3,0); break;
+      case SDLK_LEFTPAREN:  c64_key = MATRIX(3,3); break;
       case SDLK_RIGHTPAREN: c64_key = MATRIX(4,0); break;
 	      
-      case SDLK_SPACE: c64_key = MATRIX(7,4); break;
-      case SDLK_BACKQUOTE: c64_key = MATRIX(7,1); break;
-      case SDLK_BACKSLASH: c64_key = MATRIX(6,6); break;
-      case SDLK_COMMA: c64_key = MATRIX(5,7); break;
-      case SDLK_PERIOD: c64_key = MATRIX(5,4); break;
-      case SDLK_MINUS: c64_key = MATRIX(5,3); break;
-      case SDLK_PLUS: c64_key = MATRIX(5,0); break;
-      case SDLK_EQUALS: c64_key = MATRIX(6,5); break;
-      case SDLK_LEFTBRACKET: c64_key = MATRIX(5,6); break;
+      case SDLK_SPACE:        c64_key = MATRIX(7,4); break;
+      case SDLK_BACKQUOTE:    c64_key = MATRIX(7,1); break;
+      case SDLK_BACKSLASH:    c64_key = MATRIX(6,6); break;
+      case SDLK_COMMA:        c64_key = MATRIX(5,7); break;
+      case SDLK_PERIOD:       c64_key = MATRIX(5,4); break;
+      case SDLK_MINUS:        c64_key = MATRIX(5,3); break;
+      case SDLK_PLUS:         c64_key = MATRIX(5,0); break;
+      case SDLK_EQUALS:       c64_key = MATRIX(6,5); break;
+      case SDLK_LEFTBRACKET:  c64_key = MATRIX(5,6); break;
       case SDLK_RIGHTBRACKET: c64_key = MATRIX(6,1); break;
-      case SDLK_SEMICOLON: c64_key = MATRIX(6,2); break;
-      case SDLK_SLASH: c64_key = MATRIX(6,7); break;
+      case SDLK_SEMICOLON:    c64_key = MATRIX(6,2); break;
+      case SDLK_SLASH:        c64_key = MATRIX(6,7); break;
 	
-      case SDLK_BREAK: c64_key = MATRIX(7,7); break;
-      case SDLK_RETURN: c64_key = MATRIX(0,1); break;
-      case SDLK_BACKSPACE:c64_key = MATRIX(0,0); break;
-      case SDLK_PRINT: c64_key = MATRIX(6,3);  break;
-      case SDLK_END: c64_key = MATRIX(6,0); break;
-      case SDLK_PAGEUP: c64_key = MATRIX(6,0); break;
-      case SDLK_PAGEDOWN: c64_key = MATRIX(6,5); break;
+      case SDLK_BREAK:        c64_key = MATRIX(7,7); break;
+      case SDLK_RETURN:       c64_key = MATRIX(0,1); break;
+      case SDLK_BACKSPACE:    c64_key = MATRIX(0,0); break;
+      case SDLK_PRINT:        c64_key = MATRIX(6,3); break;
+      case SDLK_END:          c64_key = MATRIX(6,0); break;
+      case SDLK_PAGEUP:       c64_key = MATRIX(6,0); break;
+      case SDLK_PAGEDOWN:     c64_key = MATRIX(6,5); break;
 
-      case SDLK_F10: c64_key = MATRIX(7,2); break;
-      case SDLK_F14: c64_key = MATRIX(7,5); break;
+      case SDLK_F10:    c64_key = MATRIX(7,2); break;
+      case SDLK_F14:    c64_key = MATRIX(7,5); break;
       case SDLK_LSHIFT: c64_key = MATRIX(1,7); break;
       case SDLK_RSHIFT: c64_key = MATRIX(6,4); break;
       case SDLK_RALT: case SDLK_RMETA: c64_key = MATRIX(7,5); break;
 	      
-      case SDLK_UP: c64_key = MATRIX(0,7)| 0x80; break;
-      case SDLK_DOWN: c64_key = MATRIX(0,7); break;
-      case SDLK_LEFT: c64_key = MATRIX(0,2) | 0x80; break;
+      case SDLK_UP:    c64_key = MATRIX(0,7)|0x80; break;
+      case SDLK_DOWN:  c64_key = MATRIX(0,7); break;
+      case SDLK_LEFT:  c64_key = MATRIX(0,2)|0x80; break;
       case SDLK_RIGHT: c64_key = MATRIX(0,2); break;
 	      
       case SDLK_F1: c64_key = MATRIX(0,4); break;
-      case SDLK_F2: c64_key = MATRIX(0,4) | 0x80; break;
+      case SDLK_F2: c64_key = MATRIX(0,4)|0x80; break;
       case SDLK_F3: c64_key = MATRIX(0,5); break;
-      case SDLK_F4: c64_key = MATRIX(0,5) | 0x80; break;
+      case SDLK_F4: c64_key = MATRIX(0,5)|0x80; break;
       case SDLK_F5: c64_key = MATRIX(0,6); break;
-      case SDLK_F6: c64_key = MATRIX(0,6) | 0x80; break;
+      case SDLK_F6: c64_key = MATRIX(0,6)|0x80; break;
       case SDLK_F7: c64_key = MATRIX(0,3); break;
-      case SDLK_F8: c64_key = MATRIX(0,3) | 0x80; break;
-	      
-      case SDLK_KP0: case SDLK_KP5: c64_key = 0x10 | 0x40; break;
-      case SDLK_KP1: c64_key = 0x06 | 0x40; break;
-      case SDLK_KP2: c64_key = 0x02 | 0x40; break;
-      case SDLK_KP3: c64_key = 0x0a | 0x40; break;
-      case SDLK_KP4: c64_key = 0x04 | 0x40; break;
-      case SDLK_KP6: c64_key = 0x08 | 0x40; break;
-      case SDLK_KP7: c64_key = 0x05 | 0x40; break;
-      case SDLK_KP8: c64_key = 0x01 | 0x40; break;
-      case SDLK_KP9: c64_key = 0x09 | 0x40; break;
-	
+      case SDLK_F8: c64_key = MATRIX(0,3)|0x80; break;
+
       case SDLK_KP_DIVIDE: c64_key = MATRIX(6,7); break;
-      case SDLK_KP_ENTER: c64_key = MATRIX(0,1); break;
-	
-      case SDLK_ASTERISK: c64_key = MATRIX(6,1); break;
-      case SDLK_COLON: c64_key = MATRIX(5,5); break;
-      case SDLK_AT: c64_key = MATRIX(5,6); break;
+      case SDLK_KP_ENTER:  c64_key = MATRIX(0,1); break;
+      case SDLK_ASTERISK:  c64_key = MATRIX(6,1); break;
+      case SDLK_COLON:     c64_key = MATRIX(5,5); break;
+      case SDLK_AT:        c64_key = MATRIX(5,6); break;
       }
 
     if (c64_key < 0) {
-      //printf("Invalid key\n");
       return;
     }
   }
@@ -727,7 +589,6 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
       }
   }
 
-  // Handle other keys
   bool shifted = c64_key & 0x80;
   int c64_byte = (c64_key >> 3) & 7;
   int c64_bit = c64_key & 7;
@@ -775,8 +636,9 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
     | SDL_EVENTMASK(GUI_RETURN_INFO)
     | SDL_EVENTMASK(SDL_QUIT);
   if (start_delay>0) start_delay--; 
-	
-  if((cmd_pos < sizeof(cmd_buffer)) && (start_delay == 0))
+
+
+  if((cmd_pos < sizeof(cmd_buffer)) && (start_delay == 0) && (TheApp->AutoRunEnabled()))
     {
       keyboard_enable = true;
       translate_key((SDLKey)cmd_buffer[cmd_pos], cmd_key_up, key_matrix, rev_matrix, joystick);
@@ -801,101 +663,79 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 	SDL_PumpEvents();
       }
       
-      switch (event.type)
-	    {
-	      /*
-	    case GUI_RETURN_INFO:
-	      {
-		fprintf(stderr, "Return code from gui: %d\n", event.user.code);
-		switch (event.user.code)
-		  {
-		  case DO_RESET:
-		    TheC64->Reset();
-		    break;
-		  case DO_QUIT:
-		    quit_requested = true;
-		    break;
-		  case DO_USEPREFS:
-		    TheC64->NewPrefs(&DialogPrefs);
-		    ThePrefs = DialogPrefs;
-		    break;
-		  case DO_SAVEPREFS:
-		    TheC64->NewPrefs(&DialogPrefs);
-		    ThePrefs = DialogPrefs;
-		    ThePrefs.Save(Frodo::get_prefs_path());
-		    break;
-		  }
-		break;
-	      }
-	     */
-
-	    case SDL_KEYDOWN:
-		switch (event.key.keysym.sym) {
-
-		case SDLK_ESCAPE: //SELECT
-		  if (joy_emu < 2)
-		    joy_emu++;
-		  else
-		    joy_emu = 1;
-		  break;
-		  
-		case SDLK_RCTRL: //R
-		  SDL_PauseAudio(1);
-		  DialogPrefs = ThePrefs;
-		  menu_status = start_menu(m_buffer, screen, DialogPrefs.DrivePath);
-		  TheC64->NewPrefs(&DialogPrefs);
-		  
-		  switch (menu_status) {
-		  case 10:
-		    TheC64->Reset();
-		    break;
-
-		    //Toggle speed limiter
-		    //ThePrefs.LimitSpeed = !ThePrefs.LimitSpeed;
-
-		    //quit_requested = true;
-		  }
-		  SDL_PauseAudio(0);
-		  
-		case SDLK_RETURN: //START
-		  if (keyboard_enable && keyboard_pos) {
-		    keyboard_pos = false;
-		  } else {
-		    keyboard_enable = !keyboard_enable;
-		    keyboard_pos = true;
-		  }
-		  break;
-		      
-		case SDLK_F13:
-		  TheC64->NMI(); //NMI (Restore Key)
-		  break;
-		  
-		case SDLK_F12:
-		  TheC64->Reset();
-		  break;
-		  
-		default:
-		  if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
-		    translate_key(event.key.keysym.sym, false, key_matrix, rev_matrix, joystick);
-		    return;
-		  }
-		}
-		break;
+      switch (event.type) {
+	
+      case SDL_KEYDOWN:
+	switch (event.key.keysym.sym) {
+	  
+	case SDLK_ESCAPE: //SELECT
+	  if (joy_emu < 2)
+	    joy_emu++;
+	  else
+	    joy_emu = 1;
+	  break;
+	  
+	case SDLK_RCTRL: //R
+	  SDL_PauseAudio(1);
+	  DialogPrefs = ThePrefs;
+	  menu_status = start_menu(m_buffer, screen, DialogPrefs.DrivePath);
+	  TheC64->NewPrefs(&DialogPrefs);
+	  
+	  switch (menu_status) {
+	  case 10:
+	    TheC64->Reset();
+	    break;
+	    
+	    //Toggle speed limiter
+	    //ThePrefs.LimitSpeed = !ThePrefs.LimitSpeed;
+	    
+	    //case QUIT:
+	    //quit_requested = true;
+	    
+	    //case SAVEPREFS:
+	    //ThePrefs.Save(Frodo::get_prefs_path());
+	    
+	  }
+	  SDL_PauseAudio(0);
+	  
+	case SDLK_RETURN: //START
+	  if (keyboard_enable && keyboard_pos) {
+	    keyboard_pos = false;
+	  } else {
+	    keyboard_enable = !keyboard_enable;
+	    keyboard_pos = true;
+	  }
+	  break;
+	  
+	case SDLK_F13:
+	  TheC64->NMI(); //NMI (Restore Key)
+	  break;
+	  
+	case SDLK_F12:
+	  TheC64->Reset();
+	  break;
+	  
+	default:
+	  if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
+	    translate_key(event.key.keysym.sym, false, key_matrix, rev_matrix, joystick);
+	    return;
+	  }
+	}
+	break;
 	      
 	      
-	    case SDL_KEYUP:
-	      if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
-		translate_key(event.key.keysym.sym, true, key_matrix, rev_matrix, joystick);
-		return;
-	      }
-	      break;
+      case SDL_KEYUP:
+	if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
+	  translate_key(event.key.keysym.sym, true, key_matrix, rev_matrix, joystick);
+	  return;
+	}
+	break;
 	      
-	    case SDL_QUIT:
-	      quit_requested = true;
-	      break;
-	    }
-
-    }
+      case SDL_QUIT:
+	quit_requested = true;
+	break;
+      }
+  }
 }
 
 
@@ -906,79 +746,6 @@ bool C64Display::JoyStick1(void)
   return false;
 }
 
-
-/*
- *  Open/close joystick drivers given old and new state of
- *  joystick preferences
- */
-
-void C64::open_close_joystick(int port, int oldjoy, int newjoy)
-{
-  if (oldjoy != newjoy) {
-    joy_minx[port] = joy_miny[port] = 32767;	// Reset calibration
-    joy_maxx[port] = joy_maxy[port] = -32768;
-    if (newjoy) {
-      joy[port] = SDL_JoystickOpen(newjoy - 1);
-      if (joy[port] == NULL)
-	fprintf(stderr, "Couldn't open joystick %d\n", port + 1);
-    } else {
-      if (joy[port]) {
-	SDL_JoystickClose(joy[port]);
-	joy[port] = NULL;
-      }
-    }
-	}
-}
-
-void C64::open_close_joysticks(int oldjoy1, int oldjoy2, int newjoy1, int newjoy2)
-{
-  open_close_joystick(0, oldjoy1, newjoy1);
-  open_close_joystick(1, oldjoy2, newjoy2);
-}
-
-
-/*
- *  Poll joystick port, return CIA mask
- */
-
-uint8 C64::poll_joystick(int port)
-{
-  uint8 j = 0xff;
-  
-  if (port == 0 && (joy[0] || joy[1]))
-    SDL_JoystickUpdate();
-  
-  if (joy[port]) {
-    int x = SDL_JoystickGetAxis(joy[port], 0), y = SDL_JoystickGetAxis(joy[port], 1);
-    
-    if (x > joy_maxx[port])
-      joy_maxx[port] = x;
-    if (x < joy_minx[port])
-      joy_minx[port] = x;
-    if (y > joy_maxy[port])
-      joy_maxy[port] = y;
-    if (y < joy_miny[port])
-      joy_miny[port] = y;
-    
-    if (joy_maxx[port] - joy_minx[port] < 100 || joy_maxy[port] - joy_miny[port] < 100)
-      return 0xff;
-    
-    if (x < (joy_minx[port] + (joy_maxx[port]-joy_minx[port])/3))
-			j &= 0xfb;							// Left
-    else if (x > (joy_minx[port] + 2*(joy_maxx[port]-joy_minx[port])/3))
-      j &= 0xf7;							// Right
-
-    if (y < (joy_miny[port] + (joy_maxy[port]-joy_miny[port])/3))
-      j &= 0xfe;							// Up
-    else if (y > (joy_miny[port] + 2*(joy_maxy[port]-joy_miny[port])/3))
-      j &= 0xfd;							// Down
-    
-    if (SDL_JoystickGetButton(joy[port], 0))
-      j &= 0xef;							// Button
-  }
-  
-  return j;
-}
 
 /*
  *  Allocate C64 colors

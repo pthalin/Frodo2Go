@@ -42,15 +42,17 @@ class Frodo {
   void ArgvReceived(int argc, char **argv);
   void ReadyToRun();
   bool RunPrefsEditor();
-  
+  bool AutoRunEnabled();
   static const char *get_prefs_path() { return prefs_path; }
 
+  
  private:
   void load_rom(const char *which, const char *path, uint8 *where, size_t size, const uint8 *builtin);
   void load_rom_files();
   
   static char prefs_path[256];	// Pathname of current preferences file
   static char d8_path[256];
+  bool auto_run;
 };
 
 extern Frodo *TheApp;  // Pointer to Frodo object

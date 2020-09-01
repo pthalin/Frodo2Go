@@ -162,8 +162,13 @@ void Frodo::ReadyToRun()
 	//ThePrefs.Load(prefs_path);
 	strncpy(ThePrefs.DrivePath[0], d8_path,255);
 
-	if (d8_path[0] == '\0')
+	if (d8_path[0] == '\0') {
+	  auto_run = false;
 	  printf("ERROR: Path is to long or empty\n");
+	} else {
+	  auto_run = true;
+	}
+	
 	
 	// Create and start C64
 	TheC64 = new C64;
@@ -171,7 +176,10 @@ void Frodo::ReadyToRun()
 	TheC64->Run();
 	delete TheC64;
 }
-
+bool Frodo::AutoRunEnabled()
+{
+  return auto_run;
+}
 
 /*
  *  Run preferences editor

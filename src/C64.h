@@ -102,8 +102,6 @@ private:
 	void c64_ctor1(void);
 	void c64_ctor2(void);
 	void c64_dtor(void);
-	void open_close_joysticks(int oldjoy1, int oldjoy2, int newjoy1, int newjoy2);
-	uint8 poll_joystick(int port);
 	void thread_func(void);
 
 	bool thread_running;	// Emulation thread is running
