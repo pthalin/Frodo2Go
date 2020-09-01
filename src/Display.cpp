@@ -794,49 +794,16 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
     }
 	  
   SDL_PumpEvents();
-  while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, eventmask))
-    {
+  while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, eventmask)) {
       
       if (keyboard_enable) {
 	handle_keyboard_event(&event);
 	SDL_PumpEvents();
       }
       
-      if (GUIOpened) 
-	{
-	  if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) 
+      switch (event.type)
 	    {
-	      if (event.type == SDL_MOUSEBUTTONDOWN)
-		fprintf(stderr, "Mouse down\n");
-	      if (event.type == SDL_MOUSEBUTTONUP)
-		fprintf(stderr, "Mouse up\n");
-	      SDL_Event ev;
-	      ev.type = SDL_USEREVENT;	// map button down/up to user event
-	      ev.user.code = event.type;
-	      ev.user.data1 = (void *)(int)event.button.x;
-	      ev.user.data2 = (void *)(int)event.button.y;
-	      SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
-	    }
-	  else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
-	    {
-	      if (event.type == SDL_KEYDOWN)
-		fprintf(stderr, "Key down\n");
-	      if (event.type == SDL_KEYUP)
-		fprintf(stderr, "Key up\n");
-	      SDLKey sym = event.key.keysym.sym;
-	      int state = SDL_GetModState(); // keysym.mod does not deliver single mod key presses for 
-	      SDL_Event ev;
-	      ev.type = SDL_USEREVENT;	// map key down/up event to user event
-	      ev.user.code = event.type;
-	      ev.user.data1 = (void *)(int)sym;
-	      ev.user.data2 = (void *)(int)state;
-	      SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
-	    }
-	}
-      else
-	{
-	  switch (event.type)
-	    {/*
+	      /*
 	    case GUI_RETURN_INFO:
 	      {
 		fprintf(stderr, "Return code from gui: %d\n", event.user.code);
@@ -861,96 +828,73 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 		break;
 	      }
 	     */
-	      //case SDL_MOUSEBUTTONDOWN:
-	      //case SDL_MOUSEBUTTONUP:
-	      //start_GUI_thread();
-	      //break;
 
-	      // Key pressed
 	    case SDL_KEYDOWN:
-	      if (event.key.keysym.sym == SDLK_ESCAPE)
-		{
+		switch (event.key.keysym.sym) {
+
+		case SDLK_ESCAPE: //SELECT
 		  if (joy_emu < 2)
 		    joy_emu++;
 		  else
 		    joy_emu = 1;
+		  break;
+		  
+		case SDLK_RCTRL: //R
+		  SDL_PauseAudio(1);
+		  DialogPrefs = ThePrefs;
+		  menu_status = start_menu(m_buffer, screen, DialogPrefs.DrivePath);
+		  TheC64->NewPrefs(&DialogPrefs);
+		  
+		  switch (menu_status) {
+		  case 10:
+		    TheC64->Reset();
+		    break;
+
+		    //Toggle speed limiter
+		    //ThePrefs.LimitSpeed = !ThePrefs.LimitSpeed;
+
+		    //quit_requested = true;
+		  }
+		  SDL_PauseAudio(0);
+		  
+		case SDLK_RETURN: //START
+		  if (keyboard_enable && keyboard_pos) {
+		    keyboard_pos = false;
+		  } else {
+		    keyboard_enable = !keyboard_enable;
+		    keyboard_pos = true;
+		  }
+		  break;
+		      
+		case SDLK_F13:
+		  TheC64->NMI(); //NMI (Restore Key)
+		  break;
+		  
+		case SDLK_F12:
+		  TheC64->Reset();
+		  break;
+		  
+		default:
+		  if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
+		    translate_key(event.key.keysym.sym, false, key_matrix, rev_matrix, joystick);
+		    return;
+		  }
 		}
-	      else
-		{
-		  switch (event.key.keysym.sym)
-		    {
-		    case SDLK_RCTRL:	// R
-		      SDL_PauseAudio(1);
-
-		      DialogPrefs = ThePrefs;
-		      menu_status = start_menu(m_buffer, screen, DialogPrefs.DrivePath);
-		      TheC64->NewPrefs(&DialogPrefs);
-
-		      switch (menu_status) {
-		      case 10:
-			TheC64->Reset();
-			break;
-		      }
-		      SDL_PauseAudio(0);
-		      //quit_requested = true;
-		      break;
-		      
-		    case SDLK_RETURN: // START
-		      if (keyboard_enable && keyboard_pos)
-			keyboard_pos = false;
-		      else {
-			keyboard_enable = !keyboard_enable;
-			keyboard_pos = true;
-		      }
-		      break;
-		      
-		    case SDLK_F13:
-		      TheC64->NMI(); //  NMI (Restore)
-		      break;
-
-		    case SDLK_F12:
-		      TheC64->Reset();
-		      break;
-		      
-		      /*
-			case SDLK_KP_PLUS:	// '+' on keypad: Increase SkipFrames
-			ThePrefs.SkipFrames++;
-			break;
-			
-			case SDLK_KP_MINUS:	// '-' on keypad: Decrease SkipFrames
-			if (ThePrefs.SkipFrames > 1)
-			ThePrefs.SkipFrames--;
-			break;
-						
-			case SDLK_KP_MULTIPLY:	// '*' on keypad: Toggle speed limiter
-			ThePrefs.LimitSpeed = !ThePrefs.LimitSpeed;
-			break;
-		      */
-		    default:
-		      if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
-			translate_key(event.key.keysym.sym, false, key_matrix, rev_matrix, joystick);
-			return;
-		      }
-		    }
-		}
+		break;
+	      
+	      
+	    case SDL_KEYUP:
+	      if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
+		translate_key(event.key.keysym.sym, true, key_matrix, rev_matrix, joystick);
+		return;
+	      }
 	      break;
 	      
-	      // Key released
-	    case SDL_KEYUP:
-	      if (event.key.keysym.sym == SDLK_TAB)
-		tab_pressed = false;
-	      else
-		if ((event.key.keysym.mod & KMOD_SYNTHETIC)||!keyboard_enable) {
-		  translate_key(event.key.keysym.sym, true, key_matrix, rev_matrix, joystick);
-		  return;
-		}
-	      break;
-
 	    case SDL_QUIT:
 	      quit_requested = true;
 	      break;
 	    }
-	}
+
     }
 }
 
