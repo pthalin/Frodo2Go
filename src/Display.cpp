@@ -682,21 +682,33 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 	  TheC64->NewPrefs(&DialogPrefs);
 	  
 	  switch (menu_status) {
-	  case 10:
+	  case MENU_RESET:
 	    TheC64->Reset();
 	    break;
+
 	    
 	    //Toggle speed limiter
 	    //ThePrefs.LimitSpeed = !ThePrefs.LimitSpeed;
 	    
-	    //case QUIT:
-	    //quit_requested = true;
+	  case MENU_QUIT:
+	    quit_requested = true;
+	    break;
+
+	  case MENU_SAVE_SNAP1: TheC64->SaveSnapshot("snapshot1.ss"); break;
+	  case MENU_LOAD_SNAP1: TheC64->LoadSnapshot("snapshot1.ss"); break;
+	  case MENU_SAVE_SNAP2: TheC64->SaveSnapshot("snapshot2.ss"); break;
+	  case MENU_LOAD_SNAP2: TheC64->LoadSnapshot("snapshot2.ss"); break;
+	  case MENU_SAVE_SNAP3: TheC64->SaveSnapshot("snapshot3.ss"); break;
+	  case MENU_LOAD_SNAP3: TheC64->LoadSnapshot("snapshot3.ss"); break;
+	  case MENU_SAVE_SNAP4: TheC64->SaveSnapshot("snapshot4.ss"); break;
+	  case MENU_LOAD_SNAP4: TheC64->LoadSnapshot("snapshot4.ss"); break;
 	    
 	    //case SAVEPREFS:
 	    //ThePrefs.Save(Frodo::get_prefs_path());
 	    
 	  }
 	  SDL_PauseAudio(0);
+	  break;
 	  
 	case SDLK_RETURN: //START
 	  if (keyboard_enable && keyboard_pos) {

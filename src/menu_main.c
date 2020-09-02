@@ -3,16 +3,19 @@
 #include <libgen.h>
 #include <SDL/SDL.h>
 #include "font.h"
+#include "menu_main.h"
 #include "menu_file.h"
 
 char const  *menu_items[] =
   {
-    "M:Main",   "Load Drives", "Reset", "Quit",  NULL,
+    "M:Main",   "Load Drives", "Snapshots", "Reset", "Quit",  NULL,
+    "M:Snapshots", "Save 1", "Load 1", "Save 2", "Load 2", "Save 3", "Load 3", "Save 4", "Load 4", NULL,
     "M:Drives", "Drive 8", "Drive 9", "Drive 10", "Drive 11", NULL,
   };
 
 enum menu_action_t {
-  M_MAIN,   DRIVES,  RESET, EXIT, N_MAIN,
+  M_MAIN,   DRIVES,  SNAPSHOTS, RESET, EXIT, N_MAIN,
+  M_SNAPSHOTS, SAVE_SNAP1, LOAD_SNAP1, SAVE_SNAP2, LOAD_SNAP2, SAVE_SNAP3, LOAD_SNAP3, SAVE_SNAP4, LOAD_SNAP4, N_SNAPSHOT,
   M_DRIVES, DRIVE8,  DRIVE9,  DRIVE10,  DRIVE11, N_DRIVES,
   FILE_REQUEST,
   NO_ACTION
@@ -42,7 +45,7 @@ int status;
 void init_menu(SDL_Surface* surface) {
 
   menu_action = M_MAIN;
-  status = 0;
+  status = MENU_VOID;
   text_color = SDL_MapRGB(surface->format, 200, 200, 200);
   sel_color = SDL_MapRGB(surface->format, 128, 255, 128);
   warning_color = SDL_MapRGB(surface->format, 255, 255, 0);
@@ -103,29 +106,43 @@ void menu_function(int action) {
   
   switch(action) {
   case RESET:
-    status = 10;
+    status = MENU_RESET;
     break;
+    
   case EXIT:
-    //printf("Exit\n");
-    exit(0);
+    status = MENU_QUIT;
     break;
+    
   case DRIVES:
-    //printf("Drives\n");
     prev_menu = current_menu;
     current_menu = M_DRIVES;
     menu_refresh = 1;
     break;
+    
   case DRIVE8:
   case DRIVE9:
   case DRIVE10:
   case DRIVE11:
-    //printf("File sel\n");
-
     current_drive = action-DRIVE8;
-    //printf("Drive idx = %d\n", current_drive);
     prev_menu = current_menu;
     current_menu = FILE_REQUEST;
     break;
+
+  case SNAPSHOTS:
+    prev_menu = current_menu;
+    current_menu = M_SNAPSHOTS;
+    menu_refresh = 1;
+    break;
+
+  case SAVE_SNAP1: status = MENU_SAVE_SNAP1; break;
+  case SAVE_SNAP2: status = MENU_SAVE_SNAP2; break;
+  case SAVE_SNAP3: status = MENU_SAVE_SNAP3; break;
+  case SAVE_SNAP4: status = MENU_SAVE_SNAP4; break;
+    
+  case LOAD_SNAP1: status = MENU_LOAD_SNAP1; break;
+  case LOAD_SNAP2: status = MENU_LOAD_SNAP2; break;
+  case LOAD_SNAP3: status = MENU_LOAD_SNAP3; break;
+  case LOAD_SNAP4: status = MENU_LOAD_SNAP4; break;
   }
 }
   
@@ -141,7 +158,7 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
   int exit_menu = 0;
   SDL_LockSurface(buffer);
   menu_refresh = 1;
-  status = 0;
+  status = MENU_VOID;
   
   while(exit_menu == 0) {
     int key_press = 0;
@@ -191,12 +208,7 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
       }
     }
 
-    switch (status) {
-    case 10:
-      return 10;
-      break;
-    }
-    
+    if (status != MENU_VOID) return status;
   
     if (current_menu == FILE_REQUEST) {
       int valid = menu_file_request(screen, buffer, myfile, mypath);
