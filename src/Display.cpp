@@ -207,7 +207,6 @@ int init_graphics(void)
 
   screenLock = SDL_CreateMutex();
   buffer = new char[DISPLAY_X*DISPLAY_Y];
-  SDL_WM_SetCaption(VERSION_STRING, "Frodo");
   screen = SDL_SetVideoMode(width, height, 8, SDL_DOUBLEBUF);
   SDL_ShowCursor(SDL_DISABLE);
   surf = screen;

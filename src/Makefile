@@ -1,4 +1,5 @@
 # Makefile.in for Frodo (generic Unix/X11)
+FRODO2GO_VERSION=1.0.0
 
 ## System specific configuration
 
@@ -21,7 +22,7 @@ SYSROOT     := $(shell $(CC) --print-sysroot)
 LIBS   = -lSDL_image -lpng -lm $(shell /usr/bin/sdl-config --cflags)
 LDFLAGS= -m32 $(shell /usr/bin/sdl-config --static-libs) 
 
-CFLAGS = -m32 -g  -I./ -DKBD_LANG=0 -DHAVE_SDL -DMAEMO -Wno-narrowing
+CFLAGS = -m32 -g  -I./ -DKBD_LANG=0 -DHAVE_SDL -DMAEMO -Wno-narrowing -DFRODO2GO_VERSION=\"$(FRODO2GO_VERSION)\"
 
 
 DEFS = -DHAVE_CONFIG_H -DDATADIR=\"$(datadir)/frodo/\" -DBINDIR=\"$(bindir)/\"

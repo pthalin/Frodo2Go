@@ -80,6 +80,8 @@ int display_menu(SDL_Surface* surface,  int menu_id, int *selected) {
     rect.h = 120;
   
   SDL_FillRect(surface, &rect, 0);
+  draw_string_osd(surface, "Frodo2Go v"FRODO2GO_VERSION , 10, 215, text_color);
+  draw_string_osd(surface, "github.com/pthalin/Frodo2Go" , 10, 225, text_color);
   
   draw_string_osd(surface, menu_items[menu_id]+2, 10, 10, text_color);
 
