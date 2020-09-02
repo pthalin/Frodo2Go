@@ -18,7 +18,7 @@ CXX = g++
 SYSROOT     := $(shell $(CC) --print-sysroot)
 
 
-LIBS   = -lpng -lm $(shell /usr/bin/sdl-config --cflags)
+LIBS   = -lSDL_image -lpng -lm $(shell /usr/bin/sdl-config --cflags)
 LDFLAGS= -m32 $(shell /usr/bin/sdl-config --static-libs) 
 
 CFLAGS = -m32 -g  -I./ -DKBD_LANG=0 -DHAVE_SDL -DMAEMO -Wno-narrowing

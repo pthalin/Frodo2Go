@@ -34,9 +34,8 @@
 
 #include <png.h>
 #include <SDL/SDL.h>
-#include <SDL/SDL_thread.h>
 
-int sdl_save_png(SDL_Surface* my_surface, char* filename);
+int sdl_save_png(SDL_Surface* my_surface, char* filename, int scale);
 
 // LED states
 enum {
@@ -709,17 +708,17 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 	    quit_requested = true;
 	    break;
 
-	  case MENU_SAVE_SNAP1: TheC64->SaveSnapshot("snapshot1.ss"); break;
+	  case MENU_SAVE_SNAP1: TheC64->SaveSnapshot("snapshot1.ss"); sdl_save_png(output_surf, "snapshot1.png", 2); break;
 	  case MENU_LOAD_SNAP1: TheC64->LoadSnapshot("snapshot1.ss"); break;
-	  case MENU_SAVE_SNAP2: TheC64->SaveSnapshot("snapshot2.ss"); break;
+	  case MENU_SAVE_SNAP2: TheC64->SaveSnapshot("snapshot2.ss"); sdl_save_png(output_surf, "snapshot2.png", 2); break;
 	  case MENU_LOAD_SNAP2: TheC64->LoadSnapshot("snapshot2.ss"); break;
-	  case MENU_SAVE_SNAP3: TheC64->SaveSnapshot("snapshot3.ss"); break;
+	  case MENU_SAVE_SNAP3: TheC64->SaveSnapshot("snapshot3.ss"); sdl_save_png(output_surf, "snapshot3.png", 2); break;
 	  case MENU_LOAD_SNAP3: TheC64->LoadSnapshot("snapshot3.ss"); break;
-	  case MENU_SAVE_SNAP4: TheC64->SaveSnapshot("snapshot4.ss"); break;
+	  case MENU_SAVE_SNAP4: TheC64->SaveSnapshot("snapshot4.ss"); sdl_save_png(output_surf, "snapshot4.png", 2); break;
 	  case MENU_LOAD_SNAP4: TheC64->LoadSnapshot("snapshot4.ss"); break;
 
 	  case MENU_SCREENSHOT:
-	    sdl_save_png(output_surf, "screen.png");
+	    sdl_save_png(output_surf, "screen.png", 1);
 	    break;
 	    
 	    //case SAVEPREFS:
@@ -823,10 +822,10 @@ long int ShowRequester(const char *a, const char *b, const char *)
 #define  systemGreenMask     (output_surf->format->Gmask)
 #define  systemBlueMask      (output_surf->format->Bmask)
 
-int sdl_save_png(SDL_Surface* my_surface, char* filename)
+int sdl_save_png(SDL_Surface* my_surface, char* filename, int scale)
 {
-  int w = my_surface->w;
-  int h = my_surface->h;
+  int w = my_surface->w/scale;
+  int h = my_surface->h/scale;
   uint8* pix = (uint8*)my_surface->pixels;
   uint8 writeBuffer[512 * 3];
   
@@ -873,14 +872,14 @@ int sdl_save_png(SDL_Surface* my_surface, char* filename)
   int x;
 
   uint16 *p = (uint16 *)pix;
-  for(y = 0; y < sizeY; y++) {
-     for(x = 0; x < sizeX; x++) {
+  for(y = 0; y < sizeY*scale; y+=scale) {
+     for(x = 0; x < sizeX*scale; x+=scale) {
        uint16 v = p[x];
       *b++ = ((v & systemRedMask  ) >> systemRedShift  ) << 3; // R
       *b++ = ((v & systemGreenMask) >> systemGreenShift) << 2; // G
       *b++ = ((v & systemBlueMask ) >> systemBlueShift ) << 3; // B
     }
-    p += my_surface->pitch / 2;
+     p += scale*my_surface->pitch / 2;
     png_write_row(png_ptr,writeBuffer);
 
     b = writeBuffer;

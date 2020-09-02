@@ -12,7 +12,7 @@ CXX = $(CROSS_COMPILE)g++
 SYSROOT     := $(shell $(CC) --print-sysroot)
 
 
-LIBS   = -lpng $(shell $(SYSROOT)/usr/bin/sdl-config --cflags) -lz
+LIBS   = -lSDL_image -lpng -ljpeg $(shell $(SYSROOT)/usr/bin/sdl-config --cflags) -lz
 LDFLAGS= $(shell $(SYSROOT)/usr/bin/sdl-config --static-libs) 
 
 CFLAGS = -O2 -fomit-frame-pointer -fno-exceptions  -I./ -DKBD_LANG=0 -DHAVE_SDL -Wno-narrowing -DMAEMO

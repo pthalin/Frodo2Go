@@ -2,6 +2,7 @@
 #include <string.h>
 #include <libgen.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 #include "font.h"
 #include "menu_main.h"
 #include "menu_file.h"
@@ -158,6 +159,7 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
   int action = NO_ACTION;
   int selected = 0;
   int exit_menu = 0;
+  SDL_Surface* thumb_surface = 0;
   SDL_LockSurface(buffer);
   menu_refresh = 1;
   status = MENU_VOID;
@@ -247,9 +249,7 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
       action = display_menu(buffer, current_menu, &selected);
     }
     
-    //  printf("Selected=%d\n", selected);
     
-
     for(int j = 0; j < buffer->h; j++) {
       for(int i = 0; i < buffer->w; i++) {
 	SDL_Rect rect;
@@ -260,6 +260,25 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
 	SDL_FillRect(screen, &rect, ((unsigned short*)buffer->pixels)[j * (buffer->pitch >> 1) + i]);
       }
     }
+   
+    switch (action) {
+    case LOAD_SNAP1: thumb_surface = IMG_Load("snapshot1.png"); break;
+    case LOAD_SNAP2: thumb_surface = IMG_Load("snapshot2.png"); break;
+    case LOAD_SNAP3: thumb_surface = IMG_Load("snapshot3.png"); break;
+    case LOAD_SNAP4: thumb_surface = IMG_Load("snapshot4.png"); break;
+    default:
+      thumb_surface = 0;
+    }
+
+    if (thumb_surface) {
+      SDL_Rect dstRect;
+      dstRect.x = 160-4;
+      dstRect.y = 4;
+      dstRect.w = 320/2;
+      dstRect.h = 240/2;
+      SDL_BlitSurface(thumb_surface, NULL, screen, &dstRect);
+    }
+
     SDL_UnlockSurface(buffer);
     SDL_Flip(screen);
     SDL_Delay(100);
