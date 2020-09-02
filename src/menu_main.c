@@ -8,13 +8,13 @@
 
 char const  *menu_items[] =
   {
-    "M:Main",   "Load Drives", "Snapshots", "Reset", "Quit",  NULL,
+    "M:Main",   "Load Drives", "Snapshots", "Save Screenshot", "Reset", "Quit",  NULL,
     "M:Snapshots", "Save 1", "Load 1", "Save 2", "Load 2", "Save 3", "Load 3", "Save 4", "Load 4", NULL,
     "M:Drives", "Drive 8", "Drive 9", "Drive 10", "Drive 11", NULL,
   };
 
 enum menu_action_t {
-  M_MAIN,   DRIVES,  SNAPSHOTS, RESET, EXIT, N_MAIN,
+  M_MAIN,   DRIVES,  SNAPSHOTS, SCREENSHOT, RESET, EXIT, N_MAIN,
   M_SNAPSHOTS, SAVE_SNAP1, LOAD_SNAP1, SAVE_SNAP2, LOAD_SNAP2, SAVE_SNAP3, LOAD_SNAP3, SAVE_SNAP4, LOAD_SNAP4, N_SNAPSHOT,
   M_DRIVES, DRIVE8,  DRIVE9,  DRIVE10,  DRIVE11, N_DRIVES,
   FILE_REQUEST,
@@ -143,6 +143,8 @@ void menu_function(int action) {
   case LOAD_SNAP2: status = MENU_LOAD_SNAP2; break;
   case LOAD_SNAP3: status = MENU_LOAD_SNAP3; break;
   case LOAD_SNAP4: status = MENU_LOAD_SNAP4; break;
+
+  case SCREENSHOT: status = MENU_SCREENSHOT; break;
   }
 }
   

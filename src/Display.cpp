@@ -32,8 +32,11 @@
 #include "sdlgui.h"
 #include "menu_main.h"
 
+#include <png.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_thread.h>
+
+int sdl_save_png(SDL_Surface* my_surface, char* filename);
 
 // LED states
 enum {
@@ -96,6 +99,9 @@ void C64Display::UpdateLEDs(int l0, int l1, int l2, int l3)
 // Display surface
 static SDL_Surface *screen = 0;
 static SDL_Surface *surf = 0;
+
+static SDL_Surface *output_surf=0;
+
 
 static SDL_mutex *screenLock = 0;
 
@@ -676,6 +682,15 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 	  break;
 	  
 	case SDLK_RCTRL: //R
+	  // Copy surface before opening menu to make screenshot possible
+	  output_surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+	  SDL_Rect brect;
+	  brect.x = 0;
+	  brect.y = 0;
+	  brect.w = 320;
+	  brect.h = 240;
+	  SDL_BlitSurface(screen, &brect, output_surf, &brect);
+	    
 	  SDL_PauseAudio(1);
 	  DialogPrefs = ThePrefs;
 	  menu_status = start_menu(m_buffer, screen, DialogPrefs.DrivePath);
@@ -702,6 +717,10 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 	  case MENU_LOAD_SNAP3: TheC64->LoadSnapshot("snapshot3.ss"); break;
 	  case MENU_SAVE_SNAP4: TheC64->SaveSnapshot("snapshot4.ss"); break;
 	  case MENU_LOAD_SNAP4: TheC64->LoadSnapshot("snapshot4.ss"); break;
+
+	  case MENU_SCREENSHOT:
+	    sdl_save_png(output_surf, "screen.png");
+	    break;
 	    
 	    //case SAVEPREFS:
 	    //ThePrefs.Save(Frodo::get_prefs_path());
@@ -795,4 +814,82 @@ long int ShowRequester(const char *a, const char *b, const char *)
   printf("%s: %s\n", a, b);
   return 1;
 }
+ 
 
+#define  systemRedShift      (output_surf->format->Rshift)
+#define  systemGreenShift    (output_surf->format->Gshift)
+#define  systemBlueShift     (output_surf->format->Bshift)
+#define  systemRedMask       (output_surf->format->Rmask)
+#define  systemGreenMask     (output_surf->format->Gmask)
+#define  systemBlueMask      (output_surf->format->Bmask)
+
+int sdl_save_png(SDL_Surface* my_surface, char* filename)
+{
+  int w = my_surface->w;
+  int h = my_surface->h;
+  uint8* pix = (uint8*)my_surface->pixels;
+  uint8 writeBuffer[512 * 3];
+  
+  FILE *fp = fopen(filename,"wb");
+  
+  if(!fp) return 0;
+  
+  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+                                                NULL,
+                                                NULL,
+                                                NULL);
+  if(!png_ptr) {
+    fclose(fp);
+    return 0;
+  }
+
+  png_infop info_ptr = png_create_info_struct(png_ptr);
+
+  if(!info_ptr) {
+    png_destroy_write_struct(&png_ptr,NULL);
+    fclose(fp);
+    return 0;
+  }
+
+  png_init_io(png_ptr,fp);
+
+  png_set_IHDR(png_ptr,
+               info_ptr,
+               w,
+               h,
+               8,
+               PNG_COLOR_TYPE_RGB,
+               PNG_INTERLACE_NONE,
+               PNG_COMPRESSION_TYPE_DEFAULT,
+               PNG_FILTER_TYPE_DEFAULT);
+
+  png_write_info(png_ptr,info_ptr);
+
+  uint8 *b = writeBuffer;
+
+  int sizeX = w;
+  int sizeY = h;
+  int y;
+  int x;
+
+  uint16 *p = (uint16 *)pix;
+  for(y = 0; y < sizeY; y++) {
+     for(x = 0; x < sizeX; x++) {
+       uint16 v = p[x];
+      *b++ = ((v & systemRedMask  ) >> systemRedShift  ) << 3; // R
+      *b++ = ((v & systemGreenMask) >> systemGreenShift) << 2; // G
+      *b++ = ((v & systemBlueMask ) >> systemBlueShift ) << 3; // B
+    }
+    p += my_surface->pitch / 2;
+    png_write_row(png_ptr,writeBuffer);
+
+    b = writeBuffer;
+  }
+
+  png_write_end(png_ptr, info_ptr);
+
+  png_destroy_write_struct(&png_ptr, &info_ptr);
+
+  fclose(fp);
+  return 1;
+}

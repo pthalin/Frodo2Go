@@ -16,7 +16,8 @@ extern "C"
     MENU_SAVE_SNAP3,
     MENU_LOAD_SNAP3,
     MENU_SAVE_SNAP4,
-    MENU_LOAD_SNAP4
+    MENU_LOAD_SNAP4,
+    MENU_SCREENSHOT
  };
 
   void init_menu(SDL_Surface* surface);
