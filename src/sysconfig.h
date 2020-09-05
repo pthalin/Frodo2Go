@@ -122,9 +122,6 @@
 /* Define to 1 if you have the <values.h> header file. */
 #define HAVE_VALUES_H 1
 
-/* Extension for Maemo is enabled */
-/* #undef MAEMO */
-
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT ""
 

@@ -1,5 +1,5 @@
 # Makefile for Frodo2Go
-FRODO2GO_VERSION=1.0.0
+FRODO2GO_VERSION=1.0.1
 
 SHELL = /bin/sh
 
@@ -15,7 +15,7 @@ SYSROOT     := $(shell $(CC) --print-sysroot)
 LIBS   = -lSDL_image -lpng -ljpeg $(shell $(SYSROOT)/usr/bin/sdl-config --cflags) -lz
 LDFLAGS= $(shell $(SYSROOT)/usr/bin/sdl-config --static-libs) 
 
-CFLAGS = -O2 -fomit-frame-pointer -fno-exceptions  -I./ -DKBD_LANG=0 -DHAVE_SDL -Wno-narrowing -DMAEMO -DFRODO2GO_VERSION=\"$(FRODO2GO_VERSION)\"
+CFLAGS = -O2 -fomit-frame-pointer -Wno-psabi -fno-exceptions  -I./ -DKBD_LANG=0 -DHAVE_SDL -Wno-narrowing -DFRODO2GO_VERSION=\"$(FRODO2GO_VERSION)\"
 DEFS = -DHAVE_CONFIG_H -DDATADIR=\"$(datadir)/frodo/\" -DBINDIR=\"$(bindir)/\"
 
 

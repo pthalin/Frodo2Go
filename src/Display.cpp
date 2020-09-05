@@ -29,7 +29,6 @@
 #include "main.h"
 #include "Version.h"
 
-#include "sdlgui.h"
 #include "menu_main.h"
 
 #include <png.h>
@@ -727,17 +726,17 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 	    quit_requested = true;
 	    break;
 
-	  case MENU_SAVE_SNAP1: TheC64->SaveSnapshot("snapshot1.ss"); sdl_save_png(output_surf, "snapshot1.png", 2); break;
-	  case MENU_LOAD_SNAP1: TheC64->LoadSnapshot("snapshot1.ss"); break;
-	  case MENU_SAVE_SNAP2: TheC64->SaveSnapshot("snapshot2.ss"); sdl_save_png(output_surf, "snapshot2.png", 2); break;
-	  case MENU_LOAD_SNAP2: TheC64->LoadSnapshot("snapshot2.ss"); break;
-	  case MENU_SAVE_SNAP3: TheC64->SaveSnapshot("snapshot3.ss"); sdl_save_png(output_surf, "snapshot3.png", 2); break;
-	  case MENU_LOAD_SNAP3: TheC64->LoadSnapshot("snapshot3.ss"); break;
-	  case MENU_SAVE_SNAP4: TheC64->SaveSnapshot("snapshot4.ss"); sdl_save_png(output_surf, "snapshot4.png", 2); break;
-	  case MENU_LOAD_SNAP4: TheC64->LoadSnapshot("snapshot4.ss"); break;
+	  case MENU_SAVE_SNAP1: TheC64->SaveSnapshot((char *)"snapshot1.ss"); sdl_save_png(output_surf, (char *)"snapshot1.png", 2); break;
+	  case MENU_LOAD_SNAP1: TheC64->LoadSnapshot((char *)"snapshot1.ss"); break;
+	  case MENU_SAVE_SNAP2: TheC64->SaveSnapshot((char *)"snapshot2.ss"); sdl_save_png(output_surf, (char *)"snapshot2.png", 2); break;
+	  case MENU_LOAD_SNAP2: TheC64->LoadSnapshot((char *)"snapshot2.ss"); break;
+	  case MENU_SAVE_SNAP3: TheC64->SaveSnapshot((char *)"snapshot3.ss"); sdl_save_png(output_surf, (char *)"snapshot3.png", 2); break;
+	  case MENU_LOAD_SNAP3: TheC64->LoadSnapshot((char *)"snapshot3.ss"); break;
+	  case MENU_SAVE_SNAP4: TheC64->SaveSnapshot((char *)"snapshot4.ss"); sdl_save_png(output_surf, (char *)"snapshot4.png", 2); break;
+	  case MENU_LOAD_SNAP4: TheC64->LoadSnapshot((char *)"snapshot4.ss"); break;
 
 	  case MENU_SCREENSHOT:
-	    sdl_save_png(output_surf, "screen.png", 1);
+	    sdl_save_png(output_surf, (char *)"screen.png", 1);
 	    break;
 	    
 	    //case SAVEPREFS:
