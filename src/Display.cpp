@@ -714,7 +714,15 @@ void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joyst
 	    
 	    //Toggle speed limiter
 	    //ThePrefs.LimitSpeed = !ThePrefs.LimitSpeed;
-	    
+
+	    //Toggel true 1541 emulation
+	    //ThePrefs.Emul1541Proc = true/false;
+
+	    //Memory Expansion Size
+	    //ThePrefs.REUSize  "None"  "128K" "256K" "512K"
+
+	    //ThePrefs.SkipFrames;
+	     
 	  case MENU_QUIT:
 	    quit_requested = true;
 	    break;
