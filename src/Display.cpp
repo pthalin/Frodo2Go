@@ -99,9 +99,9 @@ void C64Display::UpdateLEDs(int l0, int l1, int l2, int l3)
 static SDL_Surface *screen = 0;
 static SDL_Surface *surf = 0;
 
-static SDL_Surface *output_surf=0;
-
-
+static SDL_Surface *output_surf = 0;
+static SDL_Surface* m_buffer = 0;
+static SDL_Surface* kb_buffer = 0;
 static SDL_mutex *screenLock = 0;
 
 // Mode of Joystick emulation. 0 = none, 1 = Joyport 1, 2 = Joyport 2
@@ -212,10 +212,23 @@ int init_graphics(void)
   surf = screen;
   if (screen == NULL)  {
     fprintf(stderr, "SDL Couldn't set video mode to %d x %d\n", width, height);
-  }
-  else {
+    return 0;
+  } else {
+    m_buffer = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+    if (m_buffer == NULL)  {
+      printf("Failed to allocate m_buffer");
+      return 0;
+    }
     init_menu(screen);
+
+    kb_buffer = SDL_CreateRGBSurface(SDL_SWSURFACE, 200, 50, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+    if (kb_buffer == NULL)  {
+      printf("Failed to allocate kb_buffer");
+      return 0;
+    }
+
   }
+  
   return 1;
 }
 
@@ -278,7 +291,6 @@ void C64Display::Update(void)
       {
 	memcpy(static_cast<char*>(surf->pixels)+surf->w*j, buffer+iOffsetX+DISPLAY_X*(j+iOffsetY), surf->w);
       }
-  SDL_Surface* kb_buffer = SDL_CreateRGBSurface(SDL_SWSURFACE, 200, 50, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
   if (keyboard_enable) {
     draw_keyboard(kb_buffer);
     SDL_Rect rect;
@@ -620,7 +632,7 @@ static void translate_key(SDLKey key, bool key_up, uint8 *key_matrix, uint8 *rev
 
 void C64Display::PollKeyboard(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joystick)
 {
-  SDL_Surface* m_buffer = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+
   SDL_Event event;
   int menu_status = 0;
   static bool cmd_key_up = false;

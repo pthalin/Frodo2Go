@@ -43,6 +43,8 @@ int current_drive = 0;
 
 int status;
 
+static SDL_Surface* thumb_surface = 0;
+
 void init_menu(SDL_Surface* surface) {
 
   menu_action = M_MAIN;
@@ -161,7 +163,6 @@ int start_menu(SDL_Surface *buffer, SDL_Surface *screen, char (*drive_path)[256]
   int action = NO_ACTION;
   int selected = 0;
   int exit_menu = 0;
-  SDL_Surface* thumb_surface = 0;
   SDL_LockSurface(buffer);
   menu_refresh = 1;
   status = MENU_VOID;
